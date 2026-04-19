@@ -1,16 +1,50 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState } from "react";
+import SiteNav from "@/components/landing/SiteNav";
+import Hero from "@/components/landing/Hero";
+import FeatureGrid from "@/components/landing/FeatureGrid";
+import SiteFooter from "@/components/landing/SiteFooter";
+import ResultsSidebar, { type AiRanking } from "@/components/landing/ResultsSidebar";
+import { generateMockResults } from "@/lib/mockData";
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const Index = () => {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [keyword, setKeyword] = useState("");
+  const [store, setStore] = useState("");
+  const [results, setResults] = useState<AiRanking[]>([]);
+
+  const handleCheck = ({ keyword: k, store: s }: { keyword: string; store: string }) => {
+    setKeyword(k);
+    setStore(s);
+    setResults([]);
+    setLoading(true);
+    setOpen(true);
+    // Simulate AI scan
+    window.setTimeout(() => {
+      setResults(generateMockResults(s));
+      setLoading(false);
+    }, 1800);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="min-h-dvh bg-background flex flex-col">
+      <SiteNav />
+      <main className="flex-1">
+        <Hero onCheck={handleCheck} loading={loading} />
+        <FeatureGrid />
+      </main>
+      <SiteFooter />
+
+      <ResultsSidebar
+        open={open}
+        loading={loading}
+        keyword={keyword}
+        store={store}
+        results={results}
+        onClose={() => setOpen(false)}
+      />
     </div>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
