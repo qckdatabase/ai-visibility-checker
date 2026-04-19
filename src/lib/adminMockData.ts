@@ -48,51 +48,61 @@ export const funnel = [
   { stage: "Click → qck.co", value: 3514 },
 ];
 
-// --- System management ---
+// --- Lead pipeline (store owners who ran a free check) ---
 
-export type UserRow = {
+export type LeadStatus = "new" | "contacted" | "qualified" | "converted" | "lost";
+export type LeadPriority = "hot" | "warm" | "cold";
+
+export type LeadRow = {
   id: string;
   name: string;
   email: string;
-  plan: "Free" | "Pro" | "Enterprise";
-  stores: number;
-  queries: number;
-  status: "active" | "trial" | "suspended";
-  joined: string;
+  domain: string;
+  visibility: number; // last scan score 0-100
+  scans: number; // how many times they ran a check
+  lastScan: string;
+  status: LeadStatus;
+  priority: LeadPriority;
+  assignedTo: string | null; // QCK rep
+  source: "Landing" | "Direct link" | "Referral" | "Ad";
+  firstSeen: string;
 };
 
-export const users: UserRow[] = [
-  { id: "u_001", name: "Maya Chen", email: "maya@lumen-skin.com", plan: "Pro", stores: 1, queries: 412, status: "active", joined: "Mar 12, 2025" },
-  { id: "u_002", name: "Diego Alvarez", email: "diego@meridian-apparel.com", plan: "Enterprise", stores: 3, queries: 1841, status: "active", joined: "Jan 04, 2025" },
-  { id: "u_003", name: "Priya Shah", email: "priya@brewlab.co", plan: "Pro", stores: 1, queries: 287, status: "trial", joined: "Apr 02, 2025" },
-  { id: "u_004", name: "Jonas Becker", email: "jonas@northbloom.co", plan: "Free", stores: 1, queries: 24, status: "active", joined: "Apr 14, 2025" },
-  { id: "u_005", name: "Aisha Khan", email: "aisha@auralia.health", plan: "Pro", stores: 2, queries: 612, status: "active", joined: "Feb 20, 2025" },
-  { id: "u_006", name: "Theo Martin", email: "theo@trailforge.cc", plan: "Free", stores: 1, queries: 8, status: "suspended", joined: "Apr 09, 2025" },
-  { id: "u_007", name: "Hana Suzuki", email: "hana@tinyhive.shop", plan: "Pro", stores: 1, queries: 198, status: "active", joined: "Mar 28, 2025" },
-  { id: "u_008", name: "Lukas Ritter", email: "lukas@calmair.io", plan: "Enterprise", stores: 5, queries: 2912, status: "active", joined: "Dec 11, 2024" },
+export const leads: LeadRow[] = [
+  { id: "l_001", name: "Maya Chen",      email: "maya@lumen-skin.com",        domain: "lumen-skin.com",       visibility: 42, scans: 3, lastScan: "2m ago",   status: "qualified", priority: "hot",  assignedTo: "Sara Bennett",  source: "Landing",     firstSeen: "Mar 12, 2025" },
+  { id: "l_002", name: "Diego Alvarez",  email: "diego@meridian-apparel.com", domain: "meridian-apparel.com", visibility: 18, scans: 5, lastScan: "4m ago",   status: "contacted", priority: "hot",  assignedTo: "Marcus Lee",    source: "Ad",          firstSeen: "Jan 04, 2025" },
+  { id: "l_003", name: "Priya Shah",     email: "priya@brewlab.co",           domain: "brewlab.co",           visibility: 71, scans: 1, lastScan: "11m ago",  status: "new",       priority: "warm", assignedTo: null,            source: "Landing",     firstSeen: "Apr 02, 2025" },
+  { id: "l_004", name: "Jonas Becker",   email: "jonas@northbloom.co",        domain: "northbloom.co",        visibility: 44, scans: 2, lastScan: "22m ago",  status: "new",       priority: "warm", assignedTo: null,            source: "Direct link", firstSeen: "Apr 14, 2025" },
+  { id: "l_005", name: "Aisha Khan",     email: "aisha@auralia.health",       domain: "auralia.health",       visibility: 58, scans: 4, lastScan: "31m ago",  status: "converted", priority: "hot",  assignedTo: "Sara Bennett",  source: "Referral",    firstSeen: "Feb 20, 2025" },
+  { id: "l_006", name: "Theo Martin",    email: "theo@trailforge.cc",         domain: "trailforge.cc",        visibility: 12, scans: 1, lastScan: "44m ago",  status: "lost",      priority: "cold", assignedTo: "Marcus Lee",    source: "Landing",     firstSeen: "Apr 09, 2025" },
+  { id: "l_007", name: "Hana Suzuki",    email: "hana@tinyhive.shop",         domain: "tinyhive.shop",        visibility: 78, scans: 1, lastScan: "1h ago",   status: "new",       priority: "cold", assignedTo: null,            source: "Landing",     firstSeen: "Mar 28, 2025" },
+  { id: "l_008", name: "Lukas Ritter",   email: "lukas@calmair.io",           domain: "calmair.io",           visibility: 35, scans: 6, lastScan: "1h ago",   status: "qualified", priority: "hot",  assignedTo: "Elena Park",    source: "Ad",          firstSeen: "Dec 11, 2024" },
+  { id: "l_009", name: "Owen Park",      email: "owen@saplingmeals.com",      domain: "saplingmeals.com",     visibility: 28, scans: 2, lastScan: "2h ago",   status: "contacted", priority: "warm", assignedTo: "Elena Park",    source: "Landing",     firstSeen: "Apr 11, 2025" },
+  { id: "l_010", name: "Riya Kapoor",    email: "riya@ringletco.com",         domain: "ringletco.com",        visibility: 51, scans: 3, lastScan: "2h ago",   status: "qualified", priority: "warm", assignedTo: "Sara Bennett",  source: "Referral",    firstSeen: "Mar 30, 2025" },
 ];
 
 export type StoreRow = {
   id: string;
   domain: string;
-  owner: string;
+  contactEmail: string;
   category: string;
   visibility: number;
-  audits: number;
-  lastAudit: string;
+  scans: number;
+  lastScan: string;
   health: "healthy" | "watch" | "critical";
+  leadStatus: LeadStatus;
 };
 
 export const stores: StoreRow[] = [
-  { id: "s_001", domain: "lumen-skin.com", owner: "Maya Chen", category: "Beauty", visibility: 62, audits: 412, lastAudit: "2m ago", health: "healthy" },
-  { id: "s_002", domain: "meridian-apparel.com", owner: "Diego Alvarez", category: "Apparel", visibility: 21, audits: 1841, lastAudit: "4m ago", health: "critical" },
-  { id: "s_003", domain: "brewlab.co", owner: "Priya Shah", category: "Home", visibility: 71, audits: 287, lastAudit: "11m ago", health: "healthy" },
-  { id: "s_004", domain: "northbloom.co", owner: "Jonas Becker", category: "Office", visibility: 44, audits: 24, lastAudit: "22m ago", health: "watch" },
-  { id: "s_005", domain: "auralia.health", owner: "Aisha Khan", category: "Wellness", visibility: 58, audits: 612, lastAudit: "31m ago", health: "healthy" },
-  { id: "s_006", domain: "trailforge.cc", owner: "Theo Martin", category: "Sports", visibility: 12, audits: 8, lastAudit: "44m ago", health: "critical" },
-  { id: "s_007", domain: "tinyhive.shop", owner: "Hana Suzuki", category: "Kids", visibility: 78, audits: 198, lastAudit: "1h ago", health: "healthy" },
-  { id: "s_008", domain: "calmair.io", owner: "Lukas Ritter", category: "Home", visibility: 65, audits: 2912, lastAudit: "1h ago", health: "healthy" },
-  { id: "s_009", domain: "saplingmeals.com", owner: "Owen Park", category: "Food", visibility: 33, audits: 142, lastAudit: "2h ago", health: "watch" },
+  { id: "s_001", domain: "lumen-skin.com",       contactEmail: "maya@lumen-skin.com",        category: "Beauty",   visibility: 42, scans: 3, lastScan: "2m ago",  health: "watch",    leadStatus: "qualified" },
+  { id: "s_002", domain: "meridian-apparel.com", contactEmail: "diego@meridian-apparel.com", category: "Apparel",  visibility: 18, scans: 5, lastScan: "4m ago",  health: "critical", leadStatus: "contacted" },
+  { id: "s_003", domain: "brewlab.co",           contactEmail: "priya@brewlab.co",           category: "Home",     visibility: 71, scans: 1, lastScan: "11m ago", health: "healthy",  leadStatus: "new" },
+  { id: "s_004", domain: "northbloom.co",        contactEmail: "jonas@northbloom.co",        category: "Office",   visibility: 44, scans: 2, lastScan: "22m ago", health: "watch",    leadStatus: "new" },
+  { id: "s_005", domain: "auralia.health",       contactEmail: "aisha@auralia.health",       category: "Wellness", visibility: 58, scans: 4, lastScan: "31m ago", health: "healthy",  leadStatus: "converted" },
+  { id: "s_006", domain: "trailforge.cc",        contactEmail: "theo@trailforge.cc",         category: "Sports",   visibility: 12, scans: 1, lastScan: "44m ago", health: "critical", leadStatus: "lost" },
+  { id: "s_007", domain: "tinyhive.shop",        contactEmail: "hana@tinyhive.shop",         category: "Kids",     visibility: 78, scans: 1, lastScan: "1h ago",  health: "healthy",  leadStatus: "new" },
+  { id: "s_008", domain: "calmair.io",           contactEmail: "lukas@calmair.io",           category: "Home",     visibility: 35, scans: 6, lastScan: "1h ago",  health: "watch",    leadStatus: "qualified" },
+  { id: "s_009", domain: "saplingmeals.com",     contactEmail: "owen@saplingmeals.com",      category: "Food",     visibility: 28, scans: 2, lastScan: "2h ago",  health: "critical", leadStatus: "contacted" },
 ];
 
 export type ModelStatus = {

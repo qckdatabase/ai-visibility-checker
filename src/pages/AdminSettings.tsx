@@ -76,7 +76,7 @@ const AdminSettings = () => {
       >
         <div className="grid sm:grid-cols-2 gap-4">
           <Field
-            label="Free-tier checks / hour / IP"
+            label="Checks / hour / IP"
             value={rateLimit}
             onChange={setRateLimit}
             suffix="checks"
@@ -116,8 +116,8 @@ const AdminSettings = () => {
           onChange={(v) => setFlags((s) => ({ ...s, publicChecker: v }))}
         />
         <Toggle
-          label="Require signup before results"
-          hint="Gate the results sidebar behind email capture"
+          label="Capture email before showing results"
+          hint="Optional lead-capture step on the results sidebar"
           checked={flags.requireSignup}
           onChange={(v) => setFlags((s) => ({ ...s, requireSignup: v }))}
         />

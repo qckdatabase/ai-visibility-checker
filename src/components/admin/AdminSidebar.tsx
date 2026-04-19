@@ -3,7 +3,7 @@ import {
   LayoutDashboard,
   Search,
   BarChart3,
-  Users,
+  UserPlus,
   Store,
   Cpu,
   ArrowUpRight,
@@ -25,16 +25,18 @@ const NAV: Array<{
     ],
   },
   {
-    section: "Management",
+    section: "Pipeline",
     items: [
-      { to: "/admin/users", label: "Users", icon: Users },
+      { to: "/admin/leads", label: "Leads", icon: UserPlus },
       { to: "/admin/stores", label: "Stores", icon: Store },
-      { to: "/admin/models", label: "AI Models", icon: Cpu },
     ],
   },
   {
-    section: "System",
-    items: [{ to: "/admin/settings", label: "System config", icon: Settings }],
+    section: "Platform",
+    items: [
+      { to: "/admin/models", label: "AI Models", icon: Cpu },
+      { to: "/admin/settings", label: "System config", icon: Settings },
+    ],
   },
 ];
 
