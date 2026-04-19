@@ -10,7 +10,7 @@ import AdminDashboard from "./pages/AdminDashboard.tsx";
 import AdminQueries from "./pages/AdminQueries.tsx";
 import AdminAnalytics from "./pages/AdminAnalytics.tsx";
 import AdminSettings from "./pages/AdminSettings.tsx";
-import AdminUsers from "./pages/AdminUsers.tsx";
+import AdminLeads from "./pages/AdminLeads.tsx";
 import AdminStores from "./pages/AdminStores.tsx";
 import AdminModels from "./pages/AdminModels.tsx";
 
@@ -28,7 +28,8 @@ const App = () => (
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/queries" element={<AdminQueries />} />
           <Route path="/admin/analytics" element={<AdminAnalytics />} />
-          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/leads" element={<AdminLeads />} />
+          <Route path="/admin/users" element={<AdminLeads />} />
           <Route path="/admin/stores" element={<AdminStores />} />
           <Route path="/admin/models" element={<AdminModels />} />
           <Route path="/admin/settings" element={<AdminSettings />} />

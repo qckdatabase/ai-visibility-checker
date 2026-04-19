@@ -76,7 +76,7 @@ const AdminSettings = () => {
       >
         <div className="grid sm:grid-cols-2 gap-4">
           <Field
-            label="Free-tier checks / hour / IP"
+            label="Checks / hour / IP"
             value={rateLimit}
             onChange={setRateLimit}
             suffix="checks"

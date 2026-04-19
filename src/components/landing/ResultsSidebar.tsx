@@ -98,22 +98,26 @@ const ResultsSidebar = ({ open, loading, keyword, store, results, onClose }: Res
               />
               <div className="relative">
                 <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-background/10 border border-background/20 text-[10px] font-mono uppercase tracking-widest mb-3">
-                  <AlertTriangle className="size-3" />
-                  Visibility Gap
+                  <Sparkles className="size-3" />
+                  Free · $2K value
                 </div>
                 <h3 className="text-xl font-medium tracking-tight leading-tight mb-2 text-balance">
-                  Does your store show up in the top 10?{" "}
-                  <span className="font-serif-italic opacity-90">If not, we can fix that.</span>
+                  Claim your free SEO &amp; CRO audit{" "}
+                  <span className="font-serif-italic opacity-90">— and start ranking inside AI answers.</span>
                 </h3>
                 <p className="text-sm opacity-70 mb-5">
-                  QCK helps stores rank inside the AI answers customers actually see.
+                  QCK&apos;s team will personally audit {store || "your store"} and send a 90-day growth
+                  plan to climb the AI recommendations list. No commitment, no signup.
                 </p>
                 <Button variant="spectral" size="lg" asChild className="w-full">
-                  <a href="https://qck.co/" target="_blank" rel="noreferrer">
-                    Fix my AI visibility
+                  <a href="https://qck.co/pages/site-audit" target="_blank" rel="noreferrer">
+                    Get my free audit
                     <ArrowUpRight className="size-4" />
                   </a>
                 </Button>
+                <p className="text-[11px] font-mono uppercase tracking-widest opacity-50 mt-3 text-center">
+                  Trusted by 100+ Shopify brands
+                </p>
               </div>
             </div>
           </div>
