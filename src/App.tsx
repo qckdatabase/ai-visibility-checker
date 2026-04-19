@@ -7,6 +7,9 @@ import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import AdminLogin from "./pages/AdminLogin.tsx";
 import AdminDashboard from "./pages/AdminDashboard.tsx";
+import AdminQueries from "./pages/AdminQueries.tsx";
+import AdminAnalytics from "./pages/AdminAnalytics.tsx";
+import AdminSettings from "./pages/AdminSettings.tsx";
 
 const queryClient = new QueryClient();
 
@@ -20,9 +23,9 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/queries" element={<AdminDashboard />} />
-          <Route path="/admin/analytics" element={<AdminDashboard />} />
-          <Route path="/admin/settings" element={<AdminDashboard />} />
+          <Route path="/admin/queries" element={<AdminQueries />} />
+          <Route path="/admin/analytics" element={<AdminAnalytics />} />
+          <Route path="/admin/settings" element={<AdminSettings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
