@@ -47,3 +47,77 @@ export const funnel = [
   { stage: "CTA viewed", value: 6342 },
   { stage: "Click → qck.co", value: 3514 },
 ];
+
+// --- System management ---
+
+export type UserRow = {
+  id: string;
+  name: string;
+  email: string;
+  plan: "Free" | "Pro" | "Enterprise";
+  stores: number;
+  queries: number;
+  status: "active" | "trial" | "suspended";
+  joined: string;
+};
+
+export const users: UserRow[] = [
+  { id: "u_001", name: "Maya Chen", email: "maya@lumen-skin.com", plan: "Pro", stores: 1, queries: 412, status: "active", joined: "Mar 12, 2025" },
+  { id: "u_002", name: "Diego Alvarez", email: "diego@meridian-apparel.com", plan: "Enterprise", stores: 3, queries: 1841, status: "active", joined: "Jan 04, 2025" },
+  { id: "u_003", name: "Priya Shah", email: "priya@brewlab.co", plan: "Pro", stores: 1, queries: 287, status: "trial", joined: "Apr 02, 2025" },
+  { id: "u_004", name: "Jonas Becker", email: "jonas@northbloom.co", plan: "Free", stores: 1, queries: 24, status: "active", joined: "Apr 14, 2025" },
+  { id: "u_005", name: "Aisha Khan", email: "aisha@auralia.health", plan: "Pro", stores: 2, queries: 612, status: "active", joined: "Feb 20, 2025" },
+  { id: "u_006", name: "Theo Martin", email: "theo@trailforge.cc", plan: "Free", stores: 1, queries: 8, status: "suspended", joined: "Apr 09, 2025" },
+  { id: "u_007", name: "Hana Suzuki", email: "hana@tinyhive.shop", plan: "Pro", stores: 1, queries: 198, status: "active", joined: "Mar 28, 2025" },
+  { id: "u_008", name: "Lukas Ritter", email: "lukas@calmair.io", plan: "Enterprise", stores: 5, queries: 2912, status: "active", joined: "Dec 11, 2024" },
+];
+
+export type StoreRow = {
+  id: string;
+  domain: string;
+  owner: string;
+  category: string;
+  visibility: number;
+  audits: number;
+  lastAudit: string;
+  health: "healthy" | "watch" | "critical";
+};
+
+export const stores: StoreRow[] = [
+  { id: "s_001", domain: "lumen-skin.com", owner: "Maya Chen", category: "Beauty", visibility: 62, audits: 412, lastAudit: "2m ago", health: "healthy" },
+  { id: "s_002", domain: "meridian-apparel.com", owner: "Diego Alvarez", category: "Apparel", visibility: 21, audits: 1841, lastAudit: "4m ago", health: "critical" },
+  { id: "s_003", domain: "brewlab.co", owner: "Priya Shah", category: "Home", visibility: 71, audits: 287, lastAudit: "11m ago", health: "healthy" },
+  { id: "s_004", domain: "northbloom.co", owner: "Jonas Becker", category: "Office", visibility: 44, audits: 24, lastAudit: "22m ago", health: "watch" },
+  { id: "s_005", domain: "auralia.health", owner: "Aisha Khan", category: "Wellness", visibility: 58, audits: 612, lastAudit: "31m ago", health: "healthy" },
+  { id: "s_006", domain: "trailforge.cc", owner: "Theo Martin", category: "Sports", visibility: 12, audits: 8, lastAudit: "44m ago", health: "critical" },
+  { id: "s_007", domain: "tinyhive.shop", owner: "Hana Suzuki", category: "Kids", visibility: 78, audits: 198, lastAudit: "1h ago", health: "healthy" },
+  { id: "s_008", domain: "calmair.io", owner: "Lukas Ritter", category: "Home", visibility: 65, audits: 2912, lastAudit: "1h ago", health: "healthy" },
+  { id: "s_009", domain: "saplingmeals.com", owner: "Owen Park", category: "Food", visibility: 33, audits: 142, lastAudit: "2h ago", health: "watch" },
+];
+
+export type ModelStatus = {
+  id: string;
+  name: string;
+  provider: string;
+  enabled: boolean;
+  status: "operational" | "degraded" | "down";
+  latency: number; // ms
+  errorRate: number; // %
+  costPer1k: number; // USD
+  share: number; // % of total queries
+};
+
+export const aiModels: ModelStatus[] = [
+  { id: "m_gpt4o", name: "GPT-4o", provider: "OpenAI", enabled: true, status: "operational", latency: 412, errorRate: 0.4, costPer1k: 5.0, share: 42 },
+  { id: "m_claude", name: "Claude 3.5 Sonnet", provider: "Anthropic", enabled: true, status: "operational", latency: 488, errorRate: 0.6, costPer1k: 3.0, share: 26 },
+  { id: "m_gemini", name: "Gemini 1.5 Pro", provider: "Google", enabled: true, status: "degraded", latency: 1124, errorRate: 3.2, costPer1k: 2.5, share: 18 },
+  { id: "m_pplx", name: "Perplexity Sonar", provider: "Perplexity", enabled: true, status: "operational", latency: 612, errorRate: 0.9, costPer1k: 1.0, share: 14 },
+  { id: "m_llama", name: "Llama 3.1 405B", provider: "Meta", enabled: false, status: "operational", latency: 720, errorRate: 1.4, costPer1k: 0.9, share: 0 },
+];
+
+export const systemHealth = {
+  uptime: 99.982,
+  apiLatencyP95: 612,
+  errorRate: 0.7,
+  queueDepth: 42,
+};

@@ -33,10 +33,10 @@ const AdminLogin = () => {
             Operator console
           </p>
           <h2 className="text-4xl font-medium tracking-tight leading-tight text-balance">
-            Monitor every AI <span className="font-serif-italic">conversation</span> that touches your category.
+            Operate the QCK <span className="font-serif-italic">platform</span> — every model, every store, every query.
           </h2>
           <p className="text-sm opacity-70">
-            Real-time visibility into queries, citations and outbound clicks back to qck.co.
+            Internal console for QCK staff: monitor system health, manage users and stores, configure AI providers.
           </p>
         </div>
         <p className="relative text-[11px] font-mono uppercase tracking-widest opacity-50">

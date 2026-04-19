@@ -1,12 +1,41 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, Search, BarChart3, ArrowUpRight, Settings, LogOut } from "lucide-react";
+import {
+  LayoutDashboard,
+  Search,
+  BarChart3,
+  Users,
+  Store,
+  Cpu,
+  ArrowUpRight,
+  Settings,
+  LogOut,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const NAV = [
-  { to: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
-  { to: "/admin/queries", label: "Queries", icon: Search },
-  { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
-  { to: "/admin/settings", label: "Settings", icon: Settings },
+const NAV: Array<{
+  section: string;
+  items: Array<{ to: string; label: string; icon: typeof LayoutDashboard }>;
+}> = [
+  {
+    section: "Monitoring",
+    items: [
+      { to: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
+      { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+      { to: "/admin/queries", label: "Query log", icon: Search },
+    ],
+  },
+  {
+    section: "Management",
+    items: [
+      { to: "/admin/users", label: "Users", icon: Users },
+      { to: "/admin/stores", label: "Stores", icon: Store },
+      { to: "/admin/models", label: "AI Models", icon: Cpu },
+    ],
+  },
+  {
+    section: "System",
+    items: [{ to: "/admin/settings", label: "System config", icon: Settings }],
+  },
 ];
 
 const AdminSidebar = () => {
@@ -21,37 +50,56 @@ const AdminSidebar = () => {
           <div className="leading-tight">
             <p className="text-sm font-semibold tracking-tight">QCK</p>
             <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
-              Console
+              Admin Console
             </p>
           </div>
         </Link>
       </div>
 
-      <nav className="flex-1 p-3 space-y-1">
-        {NAV.map((item) => {
-          const Icon = item.icon;
-          const active =
-            location.pathname === item.to ||
-            (item.to === "/admin/dashboard" && location.pathname === "/admin");
-          return (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors",
-                active
-                  ? "bg-surface-muted text-foreground"
-                  : "text-muted-foreground hover:bg-surface-muted hover:text-foreground",
-              )}
-            >
-              <Icon className="size-4" />
-              {item.label}
-            </NavLink>
-          );
-        })}
+      <nav className="flex-1 p-3 space-y-5 overflow-y-auto">
+        {NAV.map((group) => (
+          <div key={group.section}>
+            <p className="px-3 mb-1.5 text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+              {group.section}
+            </p>
+            <div className="space-y-0.5">
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                const active =
+                  location.pathname === item.to ||
+                  (item.to === "/admin/dashboard" &&
+                    location.pathname === "/admin");
+                return (
+                  <NavLink
+                    key={item.to}
+                    to={item.to}
+                    className={cn(
+                      "flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-colors",
+                      active
+                        ? "bg-surface-muted text-foreground"
+                        : "text-muted-foreground hover:bg-surface-muted hover:text-foreground",
+                    )}
+                  >
+                    <Icon className="size-4" />
+                    {item.label}
+                  </NavLink>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       <div className="p-3 border-t hairline space-y-1">
+        <div className="px-3 py-2 rounded-xl bg-surface-muted/50 mb-2">
+          <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+            System status
+          </p>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="size-1.5 rounded-full bg-prism-5 animate-pulse-soft" />
+            <span className="text-xs font-medium">All systems normal</span>
+          </div>
+        </div>
         <a
           href="https://qck.co"
           target="_blank"
