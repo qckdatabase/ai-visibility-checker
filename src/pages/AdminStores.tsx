@@ -18,7 +18,7 @@ const AdminStores: React.FC = () => {
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["stores"],
-    queryFn: () => adminApi.stores({ page: 1, limit: 200 }),
+    queryFn: () => adminApi.stores({ page: 1, limit: 100 }),
     staleTime: 2 * 60 * 1000,
   });
 
