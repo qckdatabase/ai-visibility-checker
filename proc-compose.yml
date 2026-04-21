@@ -11,7 +11,7 @@ processes:
       PORT: "8787"
       STORE_DRIVER: "postgres"
       DATABASE_URL: "postgresql://postgres@localhost/qck_admin"
-      OPENAI_API_KEY: "sk-placeholder-dev-only"
+      OPENAI_API_KEY: "REDACTED-OPENAI-KEY"
       ADMIN_PASSWORD_HASH: "$2b$10$RbSfKv2ZZQVAZh5TOshGA.c4keWab8wKqfPo9a.y9fgip4KpLCcZ."
     restart: on-failure
     ready_when:

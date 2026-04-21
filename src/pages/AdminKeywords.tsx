@@ -66,11 +66,11 @@ function hashStringToIndex(s: string): number {
 }
 
 const AdminKeywords: React.FC = () => {
-  const { data, isLoading, isError, error } = useQuery<KeywordsResponse, Error>(
-    ["admin-keywords"],
-    () => adminApi.keywords({}),
-    { staleTime: 5 * 60 * 1000 }
-  );
+  const { data, isLoading, isError, error } = useQuery<KeywordsResponse, Error>({
+    queryKey: ["admin-keywords"],
+    queryFn: () => adminApi.keywords({}),
+    staleTime: 5 * 60 * 1000,
+  });
 
   const topKeywords = data?.topKeywords ?? [];
   const sortedKeywords = [...topKeywords].sort((a, b) => b.queryCount - a.queryCount);
