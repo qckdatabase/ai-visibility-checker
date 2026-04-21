@@ -7,10 +7,8 @@ const JWT_EXPIRY = "8h";
 
 export function signToken(payload: object): string {
   const env = getEnv();
-  if (!env.JWT_SECRET) {
-    throw new Error("JWT_SECRET is not set");
-  }
-  return jwt.sign(payload, env.JWT_SECRET, { expiresIn: JWT_EXPIRY });
+  const secret = env.JWT_SECRET ?? "dev-only-secret-do-not-use-in-production";
+  return jwt.sign(payload, secret, { expiresIn: JWT_EXPIRY });
 }
 
 export function verifyToken(token: string): jwt.JwtPayload {
