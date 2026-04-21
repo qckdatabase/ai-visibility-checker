@@ -84,7 +84,7 @@ const AdminSidebar = ({ open, onClose }: AdminSidebarProps) => {
 
   return (
     <>
-      <aside className="hidden lg:flex w-60 shrink-0 flex-col border-r hairline bg-surface">
+      <aside className="hidden lg:flex lg:sticky lg:top-0 w-60 shrink-0 flex-col border-r hairline bg-surface lg:h-screen lg:overflow-y-auto">
         <div className="p-5 border-b hairline">
           <Link to="/" className="flex items-center gap-2.5 group">
             <div className="size-8 bg-foreground rounded-full flex items-center justify-center">
