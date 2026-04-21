@@ -16,10 +16,11 @@ const SUGGESTIONS = [
 const VisibilityChecker = ({ onSubmit, loading }: VisibilityCheckerProps) => {
   const [keyword, setKeyword] = useState("");
   const [store, setStore] = useState("");
+  const [consented, setConsented] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!keyword.trim() || !store.trim()) return;
+    if (!keyword.trim() || !store.trim() || !consented) return;
     onSubmit({ keyword: keyword.trim(), store: store.trim() });
   };
 
@@ -69,7 +70,7 @@ const VisibilityChecker = ({ onSubmit, loading }: VisibilityCheckerProps) => {
           type="submit"
           variant="spectral"
           size="lg"
-          disabled={loading || !keyword.trim() || !store.trim()}
+          disabled={loading || !keyword.trim() || !store.trim() || !consented}
           className="md:self-stretch md:h-auto md:px-8 group relative"
         >
           {loading ? (
@@ -99,6 +100,31 @@ const VisibilityChecker = ({ onSubmit, loading }: VisibilityCheckerProps) => {
             {s}
           </button>
         ))}
+      </div>
+
+      <div className="mt-4 flex items-start gap-3 pl-1">
+        <input
+          id="consent"
+          type="checkbox"
+          checked={consented}
+          onChange={(e) => setConsented(e.target.checked)}
+          className="mt-0.5 size-3.5 rounded border-border text-primary accent-primary cursor-pointer"
+          disabled={loading}
+        />
+        <label
+          htmlFor="consent"
+          className="text-xs text-muted-foreground leading-relaxed cursor-pointer"
+        >
+          I agree to the{" "}
+          <a href="/terms" className="underline hover:text-foreground transition-colors">
+            Terms of Service
+          </a>{" "}
+          and{" "}
+          <a href="/privacy" className="underline hover:text-foreground transition-colors">
+            Privacy Policy
+          </a>
+          . I understand my search data may be stored to operate this service.
+        </label>
       </div>
     </div>
   );
