@@ -1,11 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  Check,
-  KeyRound,
-  Gauge,
-  ShieldAlert,
-} from "lucide-react";
+import { Check, KeyRound, ShieldAlert } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -19,66 +14,13 @@ const AdminSettings = () => {
     queryFn: adminApi.config,
   });
 
-  const updateConfig = useMutation({
-    mutationFn: adminApi.updateConfig,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "config"] }),
-  });
-
   const configAction = useMutation({
     mutationFn: adminApi.configAction,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "config"] }),
   });
 
-  const [rateLimit, setRateLimit] = useState("60");
-  const [maxResults, setMaxResults] = useState("10");
-  const [scanTimeout, setScanTimeout] = useState("8000");
-  const [retention, setRetention] = useState("90");
-
-  const [flags, setFlags] = useState({
-    publicChecker: true,
-    requireSignup: false,
-    competitorTracking: true,
-    autoBlockAbuse: true,
-  });
-
-  const [saved, setSaved] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [purgeLoading, setPurgeLoading] = useState(false);
   const [purgeDone, setPurgeDone] = useState(false);
-
-  useEffect(() => {
-    if (!config) return;
-    setRateLimit(String(config.rateLimitChecksPerHour));
-    setMaxResults(String(config.rateLimitMaxResults));
-    setScanTimeout(String(config.rateLimitScanTimeoutMs));
-    setRetention(String(config.queryRetentionDays));
-    setFlags({
-      publicChecker: config.flagPublicChecker,
-      requireSignup: config.flagRequireSignup,
-      competitorTracking: config.flagCompetitorTracking,
-      autoBlockAbuse: config.flagAutoBlockAbuse,
-    });
-  }, [config]);
-
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      await updateConfig.mutateAsync({
-        rateLimitChecksPerHour: Number(rateLimit),
-        rateLimitMaxResults: Number(maxResults),
-        rateLimitScanTimeoutMs: Number(scanTimeout),
-        queryRetentionDays: Number(retention),
-        flagPublicChecker: flags.publicChecker,
-        flagRequireSignup: flags.requireSignup,
-        flagCompetitorTracking: flags.competitorTracking,
-        flagAutoBlockAbuse: flags.autoBlockAbuse,
-      });
-      setSaved(true);
-      window.setTimeout(() => setSaved(false), 1800);
-    } finally {
-      setSaving(false);
-    }
-  };
 
   const handleMaintenanceToggle = async () => {
     await configAction.mutateAsync({
@@ -101,6 +43,12 @@ const AdminSettings = () => {
   const [newOpenaiKey, setNewOpenaiKey] = useState("");
   const [openaiRotateLoading, setOpenaiRotateLoading] = useState(false);
   const [openaiRotateError, setOpenaiRotateError] = useState("");
+
+  const updateConfig = useMutation({
+    mutationFn: adminApi.updateConfig,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "config"] }),
+  });
+
   const handleRotateOpenAI = async () => {
     setOpenaiRotateError("");
     setOpenaiRotateLoading(true);
@@ -134,99 +82,25 @@ const AdminSettings = () => {
   };
 
   return (
-    <AdminShell
-      eyebrow="System"
-      title="System configuration"
-      actions={
-        <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
-          {saved ? (
-            <>
-              <Check className="size-3.5" />
-              Saved
-            </>
-          ) : saving ? (
-            "Saving…"
-          ) : (
-            "Save changes"
-          )}
-        </Button>
-      }
-    >
-      {/* System health */}
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Stat label="Retention" value={config ? `${config.queryRetentionDays}d` : "—"} accent="prism-4" />
-        <Stat label="Admin password" value={config?.adminPasswordSet ? "Set" : "Not set"} accent="prism-2" />
-        <Stat label="Maintenance mode" value={config?.maintenanceMode ? "Active" : "Off"} accent="prism-3" tone={config?.maintenanceMode ? undefined : "ok"} />
-        <Stat label="Server version" value={config?.serverVersion ?? "—"} accent="prism-1" />
+    <AdminShell eyebrow="System" title="System configuration">
+      {/* Status */}
+      <section className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+        <Stat
+          label="Maintenance mode"
+          value={config?.maintenanceMode ? "Active" : "Off"}
+          accent="prism-3"
+        />
+        <Stat
+          label="Admin password"
+          value={config?.adminPasswordSet ? "Set" : "Not set"}
+          accent="prism-2"
+        />
+        <Stat
+          label="Server version"
+          value={config?.serverVersion ?? "—"}
+          accent="prism-1"
+        />
       </section>
-
-      {/* Rate limits & quotas */}
-      <SettingsCard
-        icon={Gauge}
-        accent="prism-1"
-        title="Rate limits & quotas"
-        description="System-wide limits applied to every visibility check."
-      >
-        <div className="grid sm:grid-cols-2 gap-4">
-          <Field
-            label="Checks / hour / IP"
-            value={rateLimit}
-            onChange={setRateLimit}
-            suffix="checks"
-          />
-          <Field
-            label="Max results returned"
-            value={maxResults}
-            onChange={setMaxResults}
-            suffix="entries"
-          />
-          <Field
-            label="Per-model scan timeout"
-            value={scanTimeout}
-            onChange={setScanTimeout}
-            suffix="ms"
-          />
-          <Field
-            label="Audit log retention"
-            value={retention}
-            onChange={setRetention}
-            suffix="days"
-          />
-        </div>
-      </SettingsCard>
-
-      {/* Feature flags */}
-      <SettingsCard
-        icon={ShieldAlert}
-        accent="prism-2"
-        title="Feature flags"
-        description="Toggle product behaviors across the entire platform."
-      >
-        <Toggle
-          label="Public visibility checker"
-          hint="Anyone can run a free check on the landing page"
-          checked={flags.publicChecker}
-          onChange={(v) => setFlags((s) => ({ ...s, publicChecker: v }))}
-        />
-        <Toggle
-          label="Capture email before showing results"
-          hint="Optional lead-capture step on the results sidebar"
-          checked={flags.requireSignup}
-          onChange={(v) => setFlags((s) => ({ ...s, requireSignup: v }))}
-        />
-        <Toggle
-          label="Competitor tracking"
-          hint="Store top-10 competitors per audit for trend analysis"
-          checked={flags.competitorTracking}
-          onChange={(v) => setFlags((s) => ({ ...s, competitorTracking: v }))}
-        />
-        <Toggle
-          label="Auto-block abusive IPs"
-          hint="Suspend after 50 failed checks in 5 minutes"
-          checked={flags.autoBlockAbuse}
-          onChange={(v) => setFlags((s) => ({ ...s, autoBlockAbuse: v }))}
-        />
-      </SettingsCard>
 
       {/* OpenAI API Key */}
       <SettingsCard
@@ -405,12 +279,10 @@ const Stat = ({
   label,
   value,
   accent,
-  tone,
 }: {
   label: string;
   value: string;
-  accent: "prism-1" | "prism-2" | "prism-4" | "prism-5";
-  tone?: "ok";
+  accent: "prism-1" | "prism-2" | "prism-3" | "prism-4";
 }) => (
   <div className="p-5 rounded-3xl bg-surface border hairline relative overflow-hidden">
     <div
@@ -421,12 +293,7 @@ const Stat = ({
     <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
       {label}
     </p>
-    <p
-      className={cn(
-        "text-2xl font-semibold tabular-nums tracking-tight mt-1.5",
-        tone === "ok" && "text-prism-5",
-      )}
-    >
+    <p className="text-2xl font-semibold tabular-nums tracking-tight mt-1.5 text-foreground">
       {value}
     </p>
   </div>
@@ -439,8 +306,8 @@ const SettingsCard = ({
   description,
   children,
 }: {
-  icon: typeof Bell;
-  accent: "prism-1" | "prism-2" | "prism-3" | "prism-4" | "prism-5";
+  icon: typeof KeyRound;
+  accent: "prism-3" | "prism-4";
   title: string;
   description: string;
   children: React.ReactNode;
@@ -461,73 +328,6 @@ const SettingsCard = ({
     </div>
     <div className="space-y-3">{children}</div>
   </section>
-);
-
-const Field = ({
-  label,
-  value,
-  onChange,
-  suffix,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  suffix?: string;
-}) => (
-  <label className="block">
-    <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
-      {label}
-    </span>
-    <div className="mt-1 flex items-center px-4 py-3 rounded-2xl bg-surface border hairline focus-within:ring-2 focus-within:ring-foreground/10 focus-within:border-foreground/20 transition-all">
-      <input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        inputMode="numeric"
-        className="flex-1 bg-transparent border-none outline-none text-sm font-mono tabular-nums focus:ring-0 p-0"
-      />
-      {suffix && (
-        <span className="text-[11px] font-mono uppercase tracking-widest text-muted-foreground ml-2">
-          {suffix}
-        </span>
-      )}
-    </div>
-  </label>
-);
-
-const Toggle = ({
-  label,
-  hint,
-  checked,
-  onChange,
-}: {
-  label: string;
-  hint: string;
-  checked: boolean;
-  onChange: (v: boolean) => void;
-}) => (
-  <button
-    type="button"
-    onClick={() => onChange(!checked)}
-    className="w-full flex items-center justify-between gap-4 p-3.5 rounded-2xl border hairline bg-surface hover:bg-surface-muted/50 transition-colors text-left"
-  >
-    <div className="min-w-0">
-      <p className="text-sm font-medium">{label}</p>
-      <p className="text-xs text-muted-foreground">{hint}</p>
-    </div>
-    <span
-      className={cn(
-        "relative inline-flex h-6 w-10 shrink-0 rounded-full transition-colors",
-        checked ? "bg-foreground" : "bg-surface-muted border hairline",
-      )}
-    >
-      <span
-        className={cn(
-          "absolute top-0.5 size-5 rounded-full bg-background shadow-sm transition-all",
-          checked ? "left-[18px]" : "left-0.5",
-        )}
-      />
-    </span>
-  </button>
 );
 
 export default AdminSettings;

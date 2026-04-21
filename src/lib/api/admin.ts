@@ -69,19 +69,8 @@ export interface ConfigResponse {
   openaiApiKeyStatus: "active" | "not_set";
   openaiApiKeyMasked: string;
   adminPasswordSet: boolean;
-  queryRetentionDays: number;
-  serverVersion: string;
-  // Rate limits
-  rateLimitChecksPerHour: number;
-  rateLimitMaxResults: number;
-  rateLimitScanTimeoutMs: number;
-  // Feature flags
-  flagPublicChecker: boolean;
-  flagRequireSignup: boolean;
-  flagCompetitorTracking: boolean;
-  flagAutoBlockAbuse: boolean;
-  // Danger zone
   maintenanceMode: boolean;
+  serverVersion: string;
 }
 
 async function fetchJSON<T>(url: string, options?: RequestInit): Promise<T> {
@@ -126,18 +115,7 @@ export const adminApi = {
 
   config: () => fetchJSON<ConfigResponse>(`${BASE}/config`),
 
-  updateConfig: (body: Partial<{
-  openaiApiKey: string;
-  adminPassword: string;
-  queryRetentionDays: number;
-  rateLimitChecksPerHour: number;
-  rateLimitMaxResults: number;
-  rateLimitScanTimeoutMs: number;
-  flagPublicChecker: boolean;
-  flagRequireSignup: boolean;
-  flagCompetitorTracking: boolean;
-  flagAutoBlockAbuse: boolean;
-}>) =>
+  updateConfig: (body: { openaiApiKey?: string; adminPassword?: string }) =>
     fetchJSON<{ ok: boolean }>(`${BASE}/config`, { method: "PATCH", body: JSON.stringify(body) }),
 
   configAction: (body: { action: "enable_maintenance" | "disable_maintenance" | "purge_cache" }) =>
