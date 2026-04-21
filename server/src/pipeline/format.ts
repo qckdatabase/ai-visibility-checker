@@ -45,11 +45,14 @@ export async function formatToJSON(rawProse: string, userStore: string): Promise
       },
       { role: "user", content: rawProse },
     ],
-    response_format: {
-      type: "json_schema",
-      json_schema: FORMAT_SCHEMA,
+    text: {
+      format: {
+        name: "rankings",
+        schema: FORMAT_SCHEMA as Record<string, unknown>,
+        type: "json_schema",
+      },
     },
-    max_tokens: 2048,
+    max_output_tokens: 2048,
   });
 
   const text = response.output_text ?? "";

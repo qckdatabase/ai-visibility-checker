@@ -24,7 +24,7 @@ export async function groundedSearch(keyword: string, store: string): Promise<st
       { role: "user", content: `Shopper query: "${keyword}"\nUser's store: "${store}"` },
     ],
     tools: [{ type: "web_search_preview" }],
-    max_tokens: 4096,
+    max_output_tokens: 4096,
   });
 
   return response.output_text ?? "";
