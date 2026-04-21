@@ -6,7 +6,7 @@ import { runPipeline } from "../pipeline/index.js";
 import { PipelineError } from "../lib/errors.js";
 import type { VisibilityResponse } from "../types.js";
 
-vi.mock("../pipeline/index.js");
+vi.mock("../pipeline/index.js", () => ({ runPipeline: vi.fn() }));
 
 function createApp() {
   const app = express();
@@ -32,7 +32,7 @@ describe("POST /api/visibility", () => {
       model: "gpt-4o",
       searchedAt: "2024-01-01T00:00:00Z",
     };
-    vi.mocked(runPipeline).mockResolvedValue(mockResult);
+    (runPipeline as any).mockResolvedValue(mockResult);
 
     const res = await request(app)
       .post("/api/visibility")
@@ -54,7 +54,7 @@ describe("POST /api/visibility", () => {
       model: "gpt-4o",
       searchedAt: "2024-01-01T00:00:00Z",
     };
-    vi.mocked(runPipeline).mockResolvedValue(mockResult);
+    (runPipeline as any).mockResolvedValue(mockResult);
 
     const res = await request(app)
       .post("/api/visibility")
@@ -83,7 +83,7 @@ describe("POST /api/visibility", () => {
   });
 
   it("returns 502 on pipeline upstream_failed", async () => {
-    vi.mocked(runPipeline).mockRejectedValue(
+    (runPipeline as any).mockRejectedValue(
       new PipelineError("upstream_failed", "Stage 2 failed"),
     );
 
@@ -96,7 +96,7 @@ describe("POST /api/visibility", () => {
   });
 
   it("returns 502 on generic OpenAI error", async () => {
-    vi.mocked(runPipeline).mockRejectedValue(new Error("OpenAI auth failed"));
+    (runPipeline as any).mockRejectedValue(new Error("OpenAI auth failed"));
 
     const res = await request(app)
       .post("/api/visibility")
@@ -107,7 +107,7 @@ describe("POST /api/visibility", () => {
   });
 
   it("returns 500 on unknown error", async () => {
-    vi.mocked(runPipeline).mockRejectedValue("string error");
+    (runPipeline as any).mockRejectedValue("string error");
 
     const res = await request(app)
       .post("/api/visibility")

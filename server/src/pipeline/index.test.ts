@@ -6,10 +6,12 @@ import * as format from "./format.js";
 import * as store from "../store/index.js";
 import * as resolveDomain from "../lib/resolveDomain.js";
 
-vi.mock("../store/index.js");
-vi.mock("./search.js");
-vi.mock("./format.js");
-vi.mock("../lib/resolveDomain.js");
+vi.mock("../db/index.js", () => ({}));
+vi.mock("../db/pgStore.js", () => ({ createPgStore: vi.fn() }));
+vi.mock("../store/index.js", () => ({ getStore: vi.fn(), createMemoryStore: vi.fn() }));
+vi.mock("./search.js", () => ({}));
+vi.mock("./format.js", () => ({}));
+vi.mock("../lib/resolveDomain.js", () => ({ resolveDomain: vi.fn() }));
 
 function mockStore(overrides?: Partial<QueryStore>): QueryStore {
   return {
