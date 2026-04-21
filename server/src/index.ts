@@ -4,6 +4,7 @@ import cors from "cors";
 import { getEnv } from "./lib/env.js";
 import visibilityRouter from "./routes/visibility.js";
 import healthRouter from "./routes/health.js";
+import { migrate } from "./db/migrate.js";
 
 const env = getEnv();
 
@@ -27,7 +28,10 @@ app.use((err: unknown, _req: express.Request, res: express.Response, _next: expr
   res.status(500).json({ error: "internal", message: "An unexpected error occurred" });
 });
 
-app.listen(env.PORT, () => {
+app.listen(env.PORT, async () => {
+  if (env.STORE_DRIVER === "postgres") {
+    await migrate();
+  }
   console.log(JSON.stringify({
     event: "server_start",
     port: env.PORT,
