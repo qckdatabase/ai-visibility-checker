@@ -196,7 +196,16 @@ const ResultsList = ({ results, store }: { results: AiRanking[]; store: string }
                 {r.reason}
               </p>
             </div>
-            <ExternalLink className="size-3.5 text-muted-foreground/40 mt-1.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <a
+              href={`https://www.google.com/search?q=${encodeURIComponent(r.brand + " official website")}`}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(e) => e.stopPropagation()}
+              className="mt-1.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+              tabIndex={-1}
+            >
+              <ExternalLink className="size-3.5 text-muted-foreground/40" />
+            </a>
           </li>
         ))}
       </ol>
