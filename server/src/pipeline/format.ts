@@ -19,6 +19,7 @@ const FORMAT_SCHEMA = {
           isUser: { type: "boolean" },
         },
         required: ["rank", "brand", "reason", "isUser"],
+        additionalProperties: false,
       },
     },
   },
