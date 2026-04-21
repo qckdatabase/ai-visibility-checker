@@ -8,7 +8,6 @@ import NotFound from "./pages/NotFound.tsx";
 import AdminLogin from "./pages/AdminLogin.tsx";
 import AdminDashboard from "./pages/AdminDashboard.tsx";
 import AdminQueries from "./pages/AdminQueries.tsx";
-import AdminAnalytics from "./pages/AdminAnalytics.tsx";
 import AdminSettings from "./pages/AdminSettings.tsx";
 import AdminStores from "./pages/AdminStores.tsx";
 import AdminKeywords from "./pages/AdminKeywords.tsx";
@@ -26,7 +25,6 @@ const App = () => (
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/queries" element={<AdminQueries />} />
-          <Route path="/admin/analytics" element={<AdminAnalytics />} />
           <Route path="/admin/stores" element={<AdminStores />} />
           <Route path="/admin/keywords" element={<AdminKeywords />} />
           <Route path="/admin/settings" element={<AdminSettings />} />

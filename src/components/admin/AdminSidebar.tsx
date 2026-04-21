@@ -2,10 +2,8 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Search,
-  BarChart3,
-  UserPlus,
   Store,
-  Cpu,
+  Tag,
   ArrowUpRight,
   Settings,
   LogOut,
@@ -20,22 +18,20 @@ const NAV: Array<{
     section: "Monitoring",
     items: [
       { to: "/admin/dashboard", label: "Overview", icon: LayoutDashboard },
-      { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
-      { to: "/admin/queries", label: "Query log", icon: Search },
+      { to: "/admin/queries", label: "Queries", icon: Search },
+      { to: "/admin/keywords", label: "Keywords", icon: Tag },
     ],
   },
   {
-    section: "Pipeline",
+    section: "Catalog",
     items: [
-      { to: "/admin/leads", label: "Leads", icon: UserPlus },
       { to: "/admin/stores", label: "Stores", icon: Store },
     ],
   },
   {
     section: "Platform",
     items: [
-      { to: "/admin/models", label: "AI Models", icon: Cpu },
-      { to: "/admin/settings", label: "System config", icon: Settings },
+      { to: "/admin/settings", label: "Settings", icon: Settings },
     ],
   },
 ];
