@@ -3,7 +3,6 @@ import SiteNav from "@/components/landing/SiteNav";
 import Hero from "@/components/landing/Hero";
 import Methodology from "@/components/landing/Methodology";
 import FeatureGrid from "@/components/landing/FeatureGrid";
-import SiteFooter from "@/components/landing/SiteFooter";
 import ResultsSidebar, { type AiRanking } from "@/components/landing/ResultsSidebar";
 
 const Index = () => {
@@ -50,7 +49,6 @@ const Index = () => {
         <Methodology />
         <FeatureGrid />
       </main>
-      <SiteFooter />
 
       <ResultsSidebar
         open={open}

@@ -1,10 +1,7 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const SiteNav = () => {
-  const location = useLocation();
-  const onAdmin = location.pathname.startsWith("/admin");
-
   return (
     <nav className="sticky top-0 z-40 px-6 md:px-10 py-5 flex items-center justify-between glass-panel border-b">
       <Link to="/" className="flex items-center gap-2.5 group">
@@ -17,24 +14,15 @@ const SiteNav = () => {
         </span>
       </Link>
 
-      <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
-        <a href="#methodology" className="hover:text-foreground transition-colors">
-          Methodology
-        </a>
-        <a href="#features" className="hover:text-foreground transition-colors">
-          Features
-        </a>
-        <a href="#enterprise" className="hover:text-foreground transition-colors">
-          Enterprise
-        </a>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <Link to={onAdmin ? "/" : "/admin"}>
-          <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
-            {onAdmin ? "Back to site" : "Admin"}
-          </Button>
-        </Link>
+      <div className="flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
+          <a href="#methodology" className="hover:text-foreground transition-colors">
+            Methodology
+          </a>
+          <a href="#features" className="hover:text-foreground transition-colors">
+            Features
+          </a>
+        </div>
         <Button variant="primary" size="sm" asChild>
           <a href="https://qck.co/" target="_blank" rel="noreferrer">
             Get Started
