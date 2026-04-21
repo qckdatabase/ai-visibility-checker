@@ -2,16 +2,26 @@ import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { adminApi } from "@/lib/api/admin";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("admin@qck.co");
-  const [password, setPassword] = useState("••••••••");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const submit = (e: FormEvent) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
-    // TODO: real admin auth
-    navigate("/admin/dashboard");
+    setError("");
+    setLoading(true);
+    try {
+      await adminApi.login(password);
+      navigate("/admin/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Login failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -53,22 +63,17 @@ const AdminLogin = () => {
             </div>
             <h1 className="text-3xl font-medium tracking-tight">Sign in</h1>
             <p className="text-sm text-muted-foreground mt-1">
-              Mock console — no credentials needed.
+              Enter your admin password.
             </p>
           </div>
 
+          {error && (
+            <div className="px-4 py-3 rounded-2xl bg-prism-3/10 border border-prism-3/20 text-sm text-prism-3">
+              {error}
+            </div>
+          )}
+
           <div className="space-y-3">
-            <label className="block">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
-                Email
-              </span>
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                type="email"
-                className="mt-1 w-full px-4 py-3 rounded-2xl bg-surface border hairline focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-foreground/20 transition-all text-sm"
-              />
-            </label>
             <label className="block">
               <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
                 Password
@@ -77,14 +82,15 @@ const AdminLogin = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 type="password"
+                placeholder="Enter admin password"
                 className="mt-1 w-full px-4 py-3 rounded-2xl bg-surface border hairline focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-foreground/20 transition-all text-sm"
               />
             </label>
           </div>
 
-          <Button type="submit" variant="primary" size="lg" className="w-full group">
-            Sign in
-            <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+          <Button type="submit" variant="primary" size="lg" className="w-full group" disabled={loading}>
+            {loading ? "Signing in…" : "Sign in"}
+            {!loading && <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />}
           </Button>
 
           <p className="text-xs text-muted-foreground text-center">

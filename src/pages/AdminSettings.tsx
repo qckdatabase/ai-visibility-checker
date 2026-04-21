@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Check,
   KeyRound,
@@ -7,15 +8,28 @@ import {
   ShieldAlert,
   Server,
   Database,
+  RefreshCw,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { systemHealth } from "@/lib/adminMockData";
+import { adminApi } from "@/lib/api/admin";
 
 const numberFmt = new Intl.NumberFormat("en-US");
 
 const AdminSettings = () => {
+  const queryClient = useQueryClient();
+
+  const { data: config } = useQuery({
+    queryKey: ["admin", "config"],
+    queryFn: adminApi.config,
+  });
+
+  const updateConfig = useMutation({
+    mutationFn: adminApi.updateConfig,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "config"] }),
+  });
+
   const [rateLimit, setRateLimit] = useState("60");
   const [maxResults, setMaxResults] = useState("10");
   const [scanTimeout, setScanTimeout] = useState("8000");
@@ -42,6 +56,42 @@ const AdminSettings = () => {
     window.setTimeout(() => setSaved(false), 1800);
   };
 
+  const [openaiRotateOpen, setOpenaiRotateOpen] = useState(false);
+  const [newOpenaiKey, setNewOpenaiKey] = useState("");
+  const [openaiRotateLoading, setOpenaiRotateLoading] = useState(false);
+  const [openaiRotateError, setOpenaiRotateError] = useState("");
+  const handleRotateOpenAI = async () => {
+    setOpenaiRotateError("");
+    setOpenaiRotateLoading(true);
+    try {
+      await updateConfig.mutateAsync({ openaiApiKey: newOpenaiKey });
+      setNewOpenaiKey("");
+      setOpenaiRotateOpen(false);
+    } catch (err) {
+      setOpenaiRotateError(err instanceof Error ? err.message : "Failed to update key");
+    } finally {
+      setOpenaiRotateLoading(false);
+    }
+  };
+
+  const [passwordOpen, setPasswordOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const handleChangePassword = async () => {
+    setPasswordError("");
+    setPasswordLoading(true);
+    try {
+      await updateConfig.mutateAsync({ adminPassword: newPassword });
+      setNewPassword("");
+      setPasswordOpen(false);
+    } catch (err) {
+      setPasswordError(err instanceof Error ? err.message : "Failed to update password");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
   return (
     <AdminShell
       eyebrow="System"
@@ -61,10 +111,10 @@ const AdminSettings = () => {
     >
       {/* System health */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Stat label="Uptime · 30d" value={`${systemHealth.uptime}%`} accent="prism-5" tone="ok" />
-        <Stat label="API P95 latency" value={`${systemHealth.apiLatencyP95} ms`} accent="prism-1" />
-        <Stat label="Error rate" value={`${systemHealth.errorRate}%`} accent="prism-4" />
-        <Stat label="Queue depth" value={numberFmt.format(systemHealth.queueDepth)} accent="prism-2" />
+        <Stat label="Uptime · 30d" value="99.9%" accent="prism-5" tone="ok" />
+        <Stat label="Server version" value={config?.serverVersion ?? "—"} accent="prism-1" />
+        <Stat label="Retention" value={config ? `${config.queryRetentionDays}d` : "—"} accent="prism-4" />
+        <Stat label="Admin password" value={config?.adminPasswordSet ? "Set" : "Not set"} accent="prism-2" />
       </section>
 
       {/* Rate limits & quotas */}
@@ -174,38 +224,132 @@ const AdminSettings = () => {
         />
       </SettingsCard>
 
-      {/* Provider keys */}
+      {/* OpenAI API Key */}
       <SettingsCard
         icon={KeyRound}
         accent="prism-4"
-        title="Provider API keys"
-        description="Keys QCK uses to query each model provider."
+        title="OpenAI API Key"
+        description="Used for GPT-4o pipeline calls. Rotating the key requires no restart."
       >
-        {[
-          { name: "OpenAI", masked: "sk-proj-••••••••••••••••3a91", status: "Active" },
-          { name: "Anthropic", masked: "sk-ant-••••••••••••••••f04c", status: "Active" },
-          { name: "Google AI", masked: "AIza••••••••••••••••0d72", status: "Active" },
-          { name: "Perplexity", masked: "pplx-••••••••••••••••8c11", status: "Active" },
-        ].map((k) => (
-          <div
-            key={k.name}
-            className="p-4 rounded-2xl border hairline bg-surface-muted/40 flex items-center justify-between gap-4"
-          >
-            <div className="min-w-0">
-              <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">
-                {k.name}
+        <div className="space-y-4">
+          {config ? (
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">
+                  OpenAI
+                </p>
+                <p className="font-mono text-sm truncate">
+                  {config.openaiApiKeyStatus === "not_set"
+                    ? "Not configured"
+                    : config.openaiApiKeyMasked}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span
+                  className={cn(
+                    "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border",
+                    config.openaiApiKeyStatus === "active"
+                      ? "bg-prism-5/10 text-prism-5 border-prism-5/20"
+                      : "bg-prism-3/10 text-prism-3 border-prism-3/20",
+                  )}
+                >
+                  <span className="size-1.5 rounded-full bg-current" />
+                  {config.openaiApiKeyStatus === "active" ? "Active" : "Not set"}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setOpenaiRotateOpen((v) => !v)}
+                >
+                  {openaiRotateOpen ? "Cancel" : "Rotate"}
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <div className="h-8 w-32 rounded-xl bg-surface-muted animate-pulse" />
+          )}
+
+          {openaiRotateOpen && (
+            <div className="space-y-3 p-4 rounded-2xl border hairline bg-surface-muted/40">
+              <label className="block">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                  New OpenAI API Key
+                </span>
+                <input
+                  value={newOpenaiKey}
+                  onChange={(e) => setNewOpenaiKey(e.target.value)}
+                  placeholder="sk-..."
+                  className="mt-1 w-full px-4 py-3 rounded-2xl bg-surface border hairline focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-foreground/20 transition-all text-sm font-mono"
+                />
+              </label>
+              {openaiRotateError && (
+                <p className="text-xs text-prism-3">{openaiRotateError}</p>
+              )}
+              <Button
+                size="sm"
+                variant="primary"
+                onClick={handleRotateOpenAI}
+                disabled={openaiRotateLoading || !newOpenaiKey}
+              >
+                {openaiRotateLoading ? "Saving…" : "Save new key"}
+              </Button>
+            </div>
+          )}
+        </div>
+      </SettingsCard>
+
+      {/* Admin password */}
+      <SettingsCard
+        icon={ShieldAlert}
+        accent="prism-3"
+        title="Admin password"
+        description="Shared password for the operator console."
+      >
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-medium">Console password</p>
+              <p className="text-xs text-muted-foreground">
+                {config?.adminPasswordSet ? "Password is set" : "Not configured"}
               </p>
-              <p className="font-mono text-sm truncate">{k.masked}</p>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium bg-prism-5/10 text-prism-5 border border-prism-5/20">
-                <span className="size-1.5 rounded-full bg-current" />
-                {k.status}
-              </span>
-              <Button variant="outline" size="sm">Rotate</Button>
-            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setPasswordOpen((v) => !v)}
+            >
+              {passwordOpen ? "Cancel" : "Change"}
+            </Button>
           </div>
-        ))}
+
+          {passwordOpen && (
+            <div className="space-y-3 p-4 rounded-2xl border hairline bg-surface-muted/40">
+              <label className="block">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                  New password (min 8 chars)
+                </span>
+                <input
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  type="password"
+                  placeholder="••••••••"
+                  className="mt-1 w-full px-4 py-3 rounded-2xl bg-surface border hairline focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-foreground/20 transition-all text-sm"
+                />
+              </label>
+              {passwordError && (
+                <p className="text-xs text-prism-3">{passwordError}</p>
+              )}
+              <Button
+                size="sm"
+                variant="primary"
+                onClick={handleChangePassword}
+                disabled={passwordLoading || newPassword.length < 8}
+              >
+                {passwordLoading ? "Saving…" : "Update password"}
+              </Button>
+            </div>
+          )}
+        </div>
       </SettingsCard>
 
       {/* Infrastructure */}

@@ -5,6 +5,10 @@
  */
 import { getOpenAIClient } from "../lib/openai.js";
 
+const VALID_CATEGORIES = [
+  "Beauty", "Apparel", "Home", "Wellness", "Office", "Food", "Pets", "Sports", "Kids", "Electronics", "Other",
+] as const;
+
 const FORMAT_SCHEMA = {
   type: "object",
   properties: {
@@ -23,13 +27,18 @@ const FORMAT_SCHEMA = {
         additionalProperties: false,
       },
     },
+    category: {
+      type: "string",
+      description: `The industry category of the keyword. Must be one of: ${VALID_CATEGORIES.join(", ")}.`,
+    },
   },
-  required: ["rankings"],
+  required: ["rankings", "category"],
   additionalProperties: false,
 } as const;
 
 export type Stage2Output = {
   rankings: Array<{ rank: number; brand: string; reason: string; url: string; isUser: boolean }>;
+  category: (typeof VALID_CATEGORIES)[number];
 };
 
 export async function formatToJSON(
@@ -56,7 +65,9 @@ export async function formatToJSON(
           "You are a JSON extractor. Extract the ranked list from the following text as structured JSON.\n" +
           `If the user's store "${userStore}" appears, set isUser: true on that entry.\n` +
           `For each brand, try to find its source URL from the URL list below and include it as "url". ` +
-          "If no URL matches, use an empty string for url. Return ONLY valid JSON matching the schema.\n\n" +
+          "If no URL matches, use an empty string for url.\n" +
+          `Also classify the keyword's industry category from these options: ${VALID_CATEGORIES.join(", ")}.` +
+          " Return ONLY valid JSON matching the schema.\n\n" +
           urlsList,
       },
       { role: "user", content: rawProse },

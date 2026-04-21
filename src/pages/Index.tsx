@@ -3,6 +3,7 @@ import SiteNav from "@/components/landing/SiteNav";
 import Hero from "@/components/landing/Hero";
 import Methodology from "@/components/landing/Methodology";
 import FeatureGrid from "@/components/landing/FeatureGrid";
+import TopStoresWidget from "@/components/landing/TopStoresWidget";
 import ResultsSidebar, { type AiRanking } from "@/components/landing/ResultsSidebar";
 
 const Index = () => {
@@ -48,6 +49,7 @@ const Index = () => {
         <Hero onCheck={handleCheck} loading={loading} />
         <Methodology />
         <FeatureGrid />
+        <TopStoresWidget />
       </main>
 
       <ResultsSidebar

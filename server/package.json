@@ -11,18 +11,26 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.4.2",
     "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.3",
     "openai": "^4.77.0",
+    "pg": "^8.20.0",
     "uuid": "^10.0.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^3.0.0",
+    "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.17",
     "@types/dotenv": "^8.2.3",
     "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.16.5",
+    "@types/pg": "^8.20.0",
     "@types/supertest": "^6.0.2",
     "@types/uuid": "^10.0.0",
     "supertest": "^7.0.0",
