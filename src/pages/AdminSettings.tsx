@@ -4,7 +4,6 @@ import {
   Check,
   KeyRound,
   Gauge,
-  Bell,
   ShieldAlert,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
@@ -42,14 +41,6 @@ const AdminSettings = () => {
     autoBlockAbuse: true,
   });
 
-  const [alerts, setAlerts] = useState({
-    modelDown: true,
-    errorSpike: true,
-    queueBackup: true,
-    abuseDetected: true,
-    weeklyDigest: false,
-  });
-
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [purgeLoading, setPurgeLoading] = useState(false);
@@ -67,13 +58,6 @@ const AdminSettings = () => {
       competitorTracking: config.flagCompetitorTracking,
       autoBlockAbuse: config.flagAutoBlockAbuse,
     });
-    setAlerts({
-      modelDown: config.alertModelDown,
-      errorSpike: config.alertErrorSpike,
-      queueBackup: config.alertQueueBackup,
-      abuseDetected: config.alertAbuseDetected,
-      weeklyDigest: config.alertWeeklyDigest,
-    });
   }, [config]);
 
   const handleSave = async () => {
@@ -88,11 +72,6 @@ const AdminSettings = () => {
         flagRequireSignup: flags.requireSignup,
         flagCompetitorTracking: flags.competitorTracking,
         flagAutoBlockAbuse: flags.autoBlockAbuse,
-        alertModelDown: alerts.modelDown,
-        alertErrorSpike: alerts.errorSpike,
-        alertQueueBackup: alerts.queueBackup,
-        alertAbuseDetected: alerts.abuseDetected,
-        alertWeeklyDigest: alerts.weeklyDigest,
       });
       setSaved(true);
       window.setTimeout(() => setSaved(false), 1800);
@@ -246,45 +225,6 @@ const AdminSettings = () => {
           hint="Suspend after 50 failed checks in 5 minutes"
           checked={flags.autoBlockAbuse}
           onChange={(v) => setFlags((s) => ({ ...s, autoBlockAbuse: v }))}
-        />
-      </SettingsCard>
-
-      {/* Operator alerts */}
-      <SettingsCard
-        icon={Bell}
-        accent="prism-3"
-        title="Operator alerts"
-        description="Where the on-call team gets pinged."
-      >
-        <Toggle
-          label="Model goes down"
-          hint="Page on-call via PagerDuty"
-          checked={alerts.modelDown}
-          onChange={(v) => setAlerts((s) => ({ ...s, modelDown: v }))}
-        />
-        <Toggle
-          label="Error rate spike > 5%"
-          hint="Slack #qck-ops"
-          checked={alerts.errorSpike}
-          onChange={(v) => setAlerts((s) => ({ ...s, errorSpike: v }))}
-        />
-        <Toggle
-          label="Queue backup > 500"
-          hint="Slack #qck-ops"
-          checked={alerts.queueBackup}
-          onChange={(v) => setAlerts((s) => ({ ...s, queueBackup: v }))}
-        />
-        <Toggle
-          label="Abuse pattern detected"
-          hint="Email security@qck.co"
-          checked={alerts.abuseDetected}
-          onChange={(v) => setAlerts((s) => ({ ...s, abuseDetected: v }))}
-        />
-        <Toggle
-          label="Weekly platform digest"
-          hint="Sent every Monday 09:00 UTC"
-          checked={alerts.weeklyDigest}
-          onChange={(v) => setAlerts((s) => ({ ...s, weeklyDigest: v }))}
         />
       </SettingsCard>
 

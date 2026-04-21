@@ -80,12 +80,6 @@ export interface ConfigResponse {
   flagRequireSignup: boolean;
   flagCompetitorTracking: boolean;
   flagAutoBlockAbuse: boolean;
-  // Operator alerts
-  alertModelDown: boolean;
-  alertErrorSpike: boolean;
-  alertQueueBackup: boolean;
-  alertAbuseDetected: boolean;
-  alertWeeklyDigest: boolean;
   // Danger zone
   maintenanceMode: boolean;
 }
@@ -143,11 +137,6 @@ export const adminApi = {
   flagRequireSignup: boolean;
   flagCompetitorTracking: boolean;
   flagAutoBlockAbuse: boolean;
-  alertModelDown: boolean;
-  alertErrorSpike: boolean;
-  alertQueueBackup: boolean;
-  alertAbuseDetected: boolean;
-  alertWeeklyDigest: boolean;
 }>) =>
     fetchJSON<{ ok: boolean }>(`${BASE}/config`, { method: "PATCH", body: JSON.stringify(body) }),
 

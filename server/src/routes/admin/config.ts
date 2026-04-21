@@ -6,7 +6,6 @@ import { getEnv } from "../../lib/env.js";
 
 const router = Router();
 
-// Map camelCase -> config key name
 const CONFIG_KEYS: Record<string, string> = {
   openaiApiKey: "openai_api_key",
   queryRetentionDays: "query_retention_days",
@@ -17,11 +16,6 @@ const CONFIG_KEYS: Record<string, string> = {
   flagRequireSignup: "flag_require_signup",
   flagCompetitorTracking: "flag_competitor_tracking",
   flagAutoBlockAbuse: "flag_auto_block_abuse",
-  alertModelDown: "alert_model_down",
-  alertErrorSpike: "alert_error_spike",
-  alertQueueBackup: "alert_queue_backup",
-  alertAbuseDetected: "alert_abuse_detected",
-  alertWeeklyDigest: "alert_weekly_digest",
   maintenanceMode: "maintenance_mode",
 };
 
@@ -56,7 +50,6 @@ router.get("/config", async (_req, res) => {
 
   const [openaiKey, rateLimitChecks, rateLimitMax, rateLimitTimeout,
     retention, flagPublic, flagSignup, flagCompetitor, flagAutoBlock,
-    alertModelDown, alertErrorSpike, alertQueueBackup, alertAbuse, alertDigest,
     maintenanceMode] = await Promise.all([
     getConfigValue(pool, "openai_api_key"),
     getConfigValue(pool, "rate_limit_checks_per_hour"),
@@ -67,11 +60,6 @@ router.get("/config", async (_req, res) => {
     getConfigValue(pool, "flag_require_signup"),
     getConfigValue(pool, "flag_competitor_tracking"),
     getConfigValue(pool, "flag_auto_block_abuse"),
-    getConfigValue(pool, "alert_model_down"),
-    getConfigValue(pool, "alert_error_spike"),
-    getConfigValue(pool, "alert_queue_backup"),
-    getConfigValue(pool, "alert_abuse_detected"),
-    getConfigValue(pool, "alert_weekly_digest"),
     getConfigValue(pool, "maintenance_mode"),
   ]);
 
@@ -85,22 +73,13 @@ router.get("/config", async (_req, res) => {
     adminPasswordSet: hasPassword,
     queryRetentionDays: toNumber(retention, 90),
     serverVersion: "1.0.0",
-    // Rate limits
     rateLimitChecksPerHour: toNumber(rateLimitChecks, 60),
     rateLimitMaxResults: toNumber(rateLimitMax, 10),
     rateLimitScanTimeoutMs: toNumber(rateLimitTimeout, 8000),
-    // Feature flags
     flagPublicChecker: parseBool(flagPublic),
     flagRequireSignup: parseBool(flagSignup),
     flagCompetitorTracking: parseBool(flagCompetitor),
     flagAutoBlockAbuse: parseBool(flagAutoBlock),
-    // Operator alerts
-    alertModelDown: parseBool(alertModelDown),
-    alertErrorSpike: parseBool(alertErrorSpike),
-    alertQueueBackup: parseBool(alertQueueBackup),
-    alertAbuseDetected: parseBool(alertAbuse),
-    alertWeeklyDigest: parseBool(alertDigest),
-    // Danger zone
     maintenanceMode: parseBool(maintenanceMode),
   });
 });
@@ -109,21 +88,13 @@ const PatchConfigSchema = z.object({
   openaiApiKey: z.string().optional(),
   queryRetentionDays: z.number().int().positive().optional(),
   adminPassword: z.string().min(8, "password must be at least 8 characters").optional(),
-  // Rate limits
   rateLimitChecksPerHour: z.number().int().positive().optional(),
   rateLimitMaxResults: z.number().int().positive().optional(),
   rateLimitScanTimeoutMs: z.number().int().positive().optional(),
-  // Feature flags
   flagPublicChecker: z.boolean().optional(),
   flagRequireSignup: z.boolean().optional(),
   flagCompetitorTracking: z.boolean().optional(),
   flagAutoBlockAbuse: z.boolean().optional(),
-  // Operator alerts
-  alertModelDown: z.boolean().optional(),
-  alertErrorSpike: z.boolean().optional(),
-  alertQueueBackup: z.boolean().optional(),
-  alertAbuseDetected: z.boolean().optional(),
-  alertWeeklyDigest: z.boolean().optional(),
 });
 
 router.patch("/config", async (req, res) => {
@@ -136,18 +107,15 @@ router.patch("/config", async (req, res) => {
   const pool = getPool();
   const updates = parsed.data;
 
-  // OpenAI key
   if (updates.openaiApiKey !== undefined) {
     await setConfigValue(pool, "openai_api_key", updates.openaiApiKey);
   }
 
-  // Admin password
   if (updates.adminPassword) {
     const hash = await hashPassword(updates.adminPassword);
     await setAdminPasswordHash(hash);
   }
 
-  // All other config keys: iterate CONFIG_KEYS and write any that are present
   const writePromises: Promise<unknown>[] = [];
   for (const [camelKey, configKey] of Object.entries(CONFIG_KEYS)) {
     if (camelKey === "openaiApiKey" || camelKey === "queryRetentionDays" || camelKey === "adminPassword") continue;
@@ -180,7 +148,6 @@ router.post("/config/actions", async (req, res) => {
   } else if (action === "disable_maintenance") {
     await setConfigValue(pool, "maintenance_mode", "false");
   } else if (action === "purge_cache") {
-    // For now, clear cached flags on all queries (soft clear)
     await pool.query("UPDATE queries SET cached = false");
   }
 
