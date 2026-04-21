@@ -34,7 +34,7 @@ const AdminDashboard: React.FC = () => {
 
   if (isLoading) {
     return (
-      <AdminShell eyebrow="Operator console" title="Overview">
+      <AdminShell eyebrow="Platform" title="Overview">
         <div className="flex items-center justify-center py-32 text-sm text-muted-foreground">
           Loading…
         </div>
@@ -44,7 +44,7 @@ const AdminDashboard: React.FC = () => {
 
   if (isError) {
     return (
-      <AdminShell eyebrow="Operator console" title="Overview">
+      <AdminShell eyebrow="Platform" title="Overview">
         <div className="flex items-center justify-center py-32 text-sm text-red-600">
           Error: {(error as any)?.message ?? "Failed to load dashboard"}
         </div>
@@ -57,7 +57,7 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <AdminShell
-      eyebrow="Operator console"
+      eyebrow="Platform"
       title="Overview"
       actions={<Button variant="outline" size="sm">Last 7 days</Button>}
     >

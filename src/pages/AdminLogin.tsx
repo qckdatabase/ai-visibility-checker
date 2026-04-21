@@ -40,17 +40,17 @@ const AdminLogin = () => {
         </div>
         <div className="relative space-y-4 max-w-md">
           <p className="text-[10px] font-mono uppercase tracking-[0.25em] opacity-60">
-            Operator console
+            Platform console
           </p>
           <h2 className="text-4xl font-medium tracking-tight leading-tight text-balance">
-            Operate the QCK <span className="font-serif-italic">platform</span> — every model, every store, every query.
+            AI visibility <span className="font-serif-italic">intelligence</span> — track your store across every AI search model.
           </h2>
           <p className="text-sm opacity-70">
-            Internal console for QCK staff: monitor system health, manage users and stores, configure AI providers.
+            Monitor queries, audit keywords, manage stores, and configure the pipeline from one place.
           </p>
         </div>
         <p className="relative text-[11px] font-mono uppercase tracking-widest opacity-50">
-          v2.4 · all systems normal
+          v1.0 · all systems normal
         </p>
       </div>
 
