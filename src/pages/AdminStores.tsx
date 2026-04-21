@@ -16,11 +16,11 @@ const AdminStores: React.FC = () => {
   const [q, setQ] = useState("");
   const [health, setHealth] = useState("All");
 
-  const { data, isLoading, isError, error } = useQuery(
-    ["stores"],
-    () => adminApi.stores({ page: 1, limit: 200 }),
-    { staleTime: 2 * 60 * 1000 }
-  );
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["stores"],
+    queryFn: () => adminApi.stores({ page: 1, limit: 200 }),
+    staleTime: 2 * 60 * 1000,
+  });
 
   const rows: StoreRow[] = data?.rows ?? [];
   const totalDomains = rows.length;

@@ -49,9 +49,9 @@ const AdminQueries: React.FC = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const limit = 25;
-  const { data, isLoading, isError, error } = useQuery(
-    ["admin-queries", { keyword, store, category, page }],
-    () =>
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["admin-queries", { keyword, store, category, page }],
+    queryFn: () =>
       adminApi.queries({
         keyword: keyword || undefined,
         store: store || undefined,
@@ -59,14 +59,14 @@ const AdminQueries: React.FC = () => {
         page,
         limit,
       }),
-    { staleTime: 30 * 1000 },
-  );
+    staleTime: 30 * 1000,
+  });
 
-  const { data: brandData } = useQuery(
-    ["admin-query-brands", expandedId],
-    () => (expandedId ? adminApi.queryBrands(expandedId) : null),
-    { enabled: !!expandedId },
-  );
+  const { data: brandData } = useQuery({
+    queryKey: ["admin-query-brands", expandedId],
+    queryFn: () => (expandedId ? adminApi.queryBrands(expandedId) : null),
+    enabled: !!expandedId,
+  });
 
   const rows: QueryRow[] = data?.rows ?? [];
   const total = data?.total ?? 0;

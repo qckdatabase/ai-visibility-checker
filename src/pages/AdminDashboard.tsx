@@ -26,11 +26,11 @@ const Legend = ({ dotColor, label }: { dotColor: string; label: string }) => (
 );
 
 const AdminDashboard: React.FC = () => {
-  const { data, isLoading, isError, error } = useQuery(
-    ["admin-dashboard"],
-    () => adminApi.dashboard(),
-    { staleTime: 60 * 1000 },
-  );
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["admin-dashboard"],
+    queryFn: () => adminApi.dashboard(),
+    staleTime: 60 * 1000,
+  });
 
   if (isLoading) {
     return (
