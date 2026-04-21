@@ -26,3 +26,10 @@ dist-ssr
 # Worktrees
 .worktrees/
 worktrees/
+
+# TypeScript build info
+*.tsbuildinfo
+server/*.tsbuildinfo
+
+# Env files with secrets
+server/.env

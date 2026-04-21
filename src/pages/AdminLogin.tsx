@@ -10,7 +10,7 @@ const AdminLogin = () => {
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    // Mock auth — instantly bypass
+    // TODO: real admin auth
     navigate("/admin/dashboard");
   };
 

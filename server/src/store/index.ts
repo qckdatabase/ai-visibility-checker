@@ -8,6 +8,7 @@ export function getStore(): QueryStore {
   if (store) return store;
   const env = getEnv();
   if (env.STORE_DRIVER === "postgres") {
+    // TODO: implement pgStore
     throw new Error("postgres driver not implemented");
   }
   store = createMemoryStore();

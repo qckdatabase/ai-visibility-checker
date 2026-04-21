@@ -7,6 +7,8 @@ import type { VisibilityResponse } from "../types.js";
 
 const router = Router();
 
+// TODO: rate limiting
+
 const QuerySchema = z.object({
   keyword: z.string().trim().min(1, "keyword is required"),
   store: z.string().trim().min(1, "store is required"),
@@ -33,6 +35,7 @@ router.post("/api/visibility", async (req, res) => {
   try {
     const start = Date.now();
     const result: VisibilityResponse = await runPipeline(keyword, store);
+    // TODO: persist query to analytics DB
     log({ keyword, store, cached: result.cached, resultCount: result.results.length, totalMs: Date.now() - start });
     return res.json(result);
   } catch (err: unknown) {
