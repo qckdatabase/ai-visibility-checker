@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { getEnv } from "./lib/env.js";
 import visibilityRouter from "./routes/visibility.js";
 import healthRouter from "./routes/health.js";
+import landingRouter from "./routes/landing.js";
 import { migrate } from "./db/migrate.js";
 import { adminAuth } from "./middleware/adminAuth.js";
 import loginRouter from "./routes/admin/login.js";
@@ -32,6 +33,7 @@ app.use(
 
 app.use(healthRouter);
 app.use(visibilityRouter);
+app.use(landingRouter);
 
 // Admin auth routes (no auth required)
 app.use("/api/admin", loginRouter);
