@@ -197,16 +197,22 @@ const ResultsList = ({ results, store }: { results: AiRanking[]; store: string }
                 {r.reason}
               </p>
             </div>
-            <a
-              href={r.url || `https://www.google.com/search?q=${encodeURIComponent(r.brand)}`}
-              target="_blank"
-              rel="noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="mt-1.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
-              tabIndex={-1}
-            >
-              <ExternalLink className="size-3.5 text-muted-foreground/40" />
-            </a>
+            {r.url ? (
+              <a
+                href={r.url}
+                target="_blank"
+                rel="noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="mt-1.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                tabIndex={-1}
+              >
+                <ExternalLink className="size-3.5 text-muted-foreground/40" />
+              </a>
+            ) : (
+              <span className="mt-1.5 shrink-0 opacity-0 group-hover:opacity-30 transition-opacity">
+                <ExternalLink className="size-3.5 text-muted-foreground/40" />
+              </span>
+            )}
           </li>
         ))}
       </ol>

@@ -9,8 +9,12 @@ import * as resolveDomain from "../lib/resolveDomain.js";
 vi.mock("../db/index.js", () => ({}));
 vi.mock("../db/pgStore.js", () => ({ createPgStore: vi.fn() }));
 vi.mock("../store/index.js", () => ({ getStore: vi.fn(), createMemoryStore: vi.fn() }));
-vi.mock("./search.js", () => ({}));
-vi.mock("./format.js", () => ({}));
+vi.mock("./search.js", () => ({
+  groundedSearch: vi.fn(),
+}));
+vi.mock("./format.js", () => ({
+  formatToJSON: vi.fn(),
+}));
 vi.mock("../lib/resolveDomain.js", () => ({ resolveDomain: vi.fn() }));
 
 function mockStore(overrides?: Partial<QueryStore>): QueryStore {
@@ -55,14 +59,22 @@ describe("runPipeline", () => {
   it("calls stage 1 then stage 2 on cache miss", async () => {
     vi.spyOn(store, "getStore").mockReturnValue(mockStore());
     vi.spyOn(resolveDomain, "resolveDomain").mockResolvedValue("nike.com");
-    vi.spyOn(search, "groundedSearch").mockResolvedValue({ text: "1. Nike - Great shoes.", urls: new Map() });
+    vi.spyOn(search, "groundedSearch").mockResolvedValue({
+      rankings: [
+        { rank: 1, brand: "Nike", reason: "Great shoes.", url: "https://nike.com" },
+        { rank: 2, brand: "Adidas", reason: "Popular brand.", url: "https://adidas.com" },
+        { rank: 3, brand: "Puma", reason: "Good quality.", url: "https://puma.com" },
+        { rank: 4, brand: "New Balance", reason: "Comfortable.", url: "https://newbalance.com" },
+        { rank: 5, brand: "Reebok", reason: "Affordable.", url: "https://reebok.com" },
+      ],
+    });
     vi.spyOn(format, "formatToJSON").mockResolvedValue({
       rankings: [
-        { rank: 1, brand: "Nike", reason: "Great shoes.", url: "", isUser: false },
-        { rank: 2, brand: "Adidas", reason: "Popular brand.", url: "", isUser: false },
-        { rank: 3, brand: "Puma", reason: "Good quality.", url: "", isUser: false },
-        { rank: 4, brand: "New Balance", reason: "Comfortable.", url: "", isUser: false },
-        { rank: 5, brand: "Reebok", reason: "Affordable.", url: "", isUser: false },
+        { rank: 1, brand: "Nike", reason: "Great shoes.", url: "https://nike.com", isUser: false },
+        { rank: 2, brand: "Adidas", reason: "Popular brand.", url: "https://adidas.com", isUser: false },
+        { rank: 3, brand: "Puma", reason: "Good quality.", url: "https://puma.com", isUser: false },
+        { rank: 4, brand: "New Balance", reason: "Comfortable.", url: "https://newbalance.com", isUser: false },
+        { rank: 5, brand: "Reebok", reason: "Affordable.", url: "https://reebok.com", isUser: false },
       ],
       category: "Apparel",
     });
@@ -78,9 +90,11 @@ describe("runPipeline", () => {
   it("throws PipelineError when stage 2 returns < 5 entries", async () => {
     vi.spyOn(store, "getStore").mockReturnValue(mockStore());
     vi.spyOn(resolveDomain, "resolveDomain").mockResolvedValue("nike.com");
-    vi.spyOn(search, "groundedSearch").mockResolvedValue({ text: "1. A", urls: new Map() });
+    vi.spyOn(search, "groundedSearch").mockResolvedValue({
+      rankings: [{ rank: 1, brand: "A", reason: "R", url: "https://a.com" }],
+    });
     vi.spyOn(format, "formatToJSON").mockResolvedValue({
-      rankings: [{ rank: 1, brand: "A", reason: "R", url: "", isUser: false }],
+      rankings: [{ rank: 1, brand: "A", reason: "R", url: "https://a.com", isUser: false }],
       category: "Apparel",
     });
 

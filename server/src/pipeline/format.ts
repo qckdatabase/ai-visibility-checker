@@ -1,9 +1,10 @@
 /**
- * Stage 2 — format to structured JSON.
+ * Stage 2 — category classification + isUser flag.
  * Second GPT-4o call, no tools, json_schema output.
- * Parses the raw prose from stage 1 into AiRanking[].
+ * Takes structured rankings from stage 1 and adds category + isUser.
  */
 import { getOpenAIClient } from "../lib/openai.js";
+import type { Stage1Output } from "./search.js";
 
 const VALID_CATEGORIES = [
   "Beauty", "Apparel", "Home", "Wellness", "Office", "Food", "Pets", "Sports", "Kids", "Electronics", "Other",
@@ -42,19 +43,12 @@ export type Stage2Output = {
 };
 
 export async function formatToJSON(
-  rawProse: string,
+  stage1Output: Stage1Output,
   userStore: string,
-  sourceUrls: Map<string, string>,
 ): Promise<Stage2Output> {
   const client = getOpenAIClient();
 
-  const urlsList =
-    sourceUrls.size > 0
-      ? "Source URLs from web search:\n" +
-        Array.from(sourceUrls.entries())
-          .map(([name, url]) => `  - ${name}: ${url}`)
-          .join("\n")
-      : "No source URLs available.";
+  const rankingsText = JSON.stringify(stage1Output.rankings, null, 2);
 
   const response = await client.responses.create({
     model: "gpt-4o",
@@ -62,15 +56,15 @@ export async function formatToJSON(
       {
         role: "system",
         content:
-          "You are a JSON extractor. Extract the ranked list from the following text as structured JSON.\n" +
-          `If the user's store "${userStore}" appears, set isUser: true on that entry.\n` +
-          `For each brand, try to find its source URL from the URL list below and include it as "url". ` +
-          "If no URL matches, use an empty string for url.\n" +
-          `Also classify the keyword's industry category from these options: ${VALID_CATEGORIES.join(", ")}.` +
-          " Return ONLY valid JSON matching the schema.\n\n" +
-          urlsList,
+          "You are a JSON processor. Take the ranked brand list below (which already has rank, brand, reason, and url from a web search) and produce updated JSON with two additions:\n" +
+          `1. Set isUser: true on the entry where brand matches the user's store "${userStore}" (fuzzy match on brand name is fine).\n` +
+          `2. Classify the keyword's industry category from these options: ${VALID_CATEGORIES.join(", ")}.\n` +
+          "Return ONLY valid JSON matching the schema. Preserve all existing url values — do not overwrite them with empty strings.\n",
       },
-      { role: "user", content: rawProse },
+      {
+        role: "user",
+        content: `Ranked brands from web search:\n${rankingsText}`,
+      },
     ],
     text: {
       format: {
