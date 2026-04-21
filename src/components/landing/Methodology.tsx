@@ -2,26 +2,26 @@ const STEPS = [
   {
     n: "01",
     color: "prism-1",
-    title: "Generate the questions",
-    body: "We seed real shopper prompts in your category — pulled from search trends and review language, not made-up phrases.",
+    title: "Audit & Intent Mapping",
+    body: "We map how your audience asks — across voice, AI-chat, and generative prompts — then align your content to match the questions that drive purchases.",
   },
   {
     n: "02",
     color: "prism-2",
-    title: "Ask the models",
-    body: "Each prompt runs against GPT-4o, Claude 3.5, Gemini 1.5 Pro, and Perplexity Sonar — the assistants your buyers actually use.",
+    title: "Query the AI models",
+    body: "Each keyword runs across GPT-4o, Claude 3.5 Sonnet, Gemini 2.0 Flash, Perplexity Sonar, and Llama 3.1 — the assistants your buyers use to discover products.",
   },
   {
     n: "03",
     color: "prism-3",
-    title: "Parse the answers",
-    body: "We extract every brand each model recommends, where you appear in the list, and which sources it cited to get there.",
+    title: "Extract & rank brands",
+    body: "We parse every brand each model recommends, your position in the list, and the sources or reasoning it cites — so you know exactly where you stand.",
   },
   {
     n: "04",
     color: "prism-4",
-    title: "Score visibility",
-    body: "Mentions are weighted by rank and frequency across models, then normalized into a single 0–100 visibility score.",
+    title: "Score & prioritize",
+    body: "Mentions are weighted by rank position and frequency across models, normalized into a 0–100 visibility score with a clear action roadmap.",
   },
 ];
 
@@ -33,11 +33,11 @@ const Methodology = () => (
           Methodology
         </p>
         <h2 className="text-4xl md:text-5xl font-medium tracking-tight leading-[1.05] text-balance">
-          What <span className="font-serif-italic">actually</span> happens when you run a scan.
+          How a QCK scan <span className="font-serif-italic">actually</span> works.
         </h2>
         <p className="text-base text-muted-foreground mt-5 max-w-xl leading-relaxed">
-          No black box. Every visibility score is built from the same four steps,
-          run against the assistants your customers ask first.
+          Built on the same AEO/GEO framework QCK uses with agency clients —
+          four steps that map your brand into the AI purchase consideration flow.
         </p>
       </div>
 
@@ -60,7 +60,7 @@ const Methodology = () => (
       </ol>
 
       <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mt-10">
-        Scans refresh weekly · model recommendations shift as their training updates
+        Scans run on-demand · model recommendations shift as training data updates
       </p>
     </div>
   </section>

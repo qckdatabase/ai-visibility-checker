@@ -1,7 +1,7 @@
 import VisibilityChecker from "./VisibilityChecker";
 
 interface HeroProps {
-  onCheck: (data: { keyword: string; store: string }) => void;
+  onCheck: (data: { keyword: string; store: string; consent: boolean }) => void;
   loading: boolean;
 }
 
@@ -61,7 +61,7 @@ const Hero = ({ onCheck, loading }: HeroProps) => {
             Auditing across
           </p>
           <div className="flex flex-wrap justify-center items-center gap-x-10 gap-y-3 opacity-60">
-            {["GPT-4o", "Claude 3.5", "Gemini Pro", "Perplexity", "Llama 3"].map(
+            {["GPT-4o", "Claude 3.5 Sonnet", "Gemini 2.0 Flash", "Perplexity Sonar", "Llama 3.1"].map(
               (m) => (
                 <span
                   key={m}

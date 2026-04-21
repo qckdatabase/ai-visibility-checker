@@ -3,7 +3,7 @@ import { ArrowRight, Loader2, Search, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface VisibilityCheckerProps {
-  onSubmit: (data: { keyword: string; store: string }) => void;
+  onSubmit: (data: { keyword: string; store: string; consent: boolean }) => void;
   loading: boolean;
 }
 
@@ -21,7 +21,7 @@ const VisibilityChecker = ({ onSubmit, loading }: VisibilityCheckerProps) => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!keyword.trim() || !store.trim() || !consented) return;
-    onSubmit({ keyword: keyword.trim(), store: store.trim() });
+    onSubmit({ keyword: keyword.trim(), store: store.trim(), consent: consented });
   };
 
   return (

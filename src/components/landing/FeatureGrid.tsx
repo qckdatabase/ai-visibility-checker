@@ -4,20 +4,20 @@ const FEATURES = [
   {
     icon: Sparkles,
     color: "prism-1",
-    title: "Latent Semantic Audit",
-    body: "Understand the semantic clusters LLMs use to categorize your brand and products.",
+    title: "AEO + GEO Framework",
+    body: "Move beyond traditional SEO. We optimize for answer engines and generative AI so your brand gets cited, not just ranked.",
   },
   {
     icon: Target,
     color: "prism-2",
-    title: "Citation Tracking",
-    body: "See which sources, reviews and competitors AI is citing instead of you.",
+    title: "Brand in AI Answers",
+    body: "See exactly where AI models mention your brand — or your competitors — and what it takes to own that citation spot.",
   },
   {
     icon: BarChart3,
     color: "prism-3",
-    title: "AI SEO Roadmap",
-    body: "Receive prioritized, technical changes that make your store findable to GPT.",
+    title: "Actionable Roadmap",
+    body: "Walk away with a prioritized list of content, schema, and authority-building steps that move the needle on AI visibility.",
   },
 ];
 
@@ -29,8 +29,21 @@ const FeatureGrid = () => (
           Why QCK
         </p>
         <h2 className="text-4xl md:text-5xl font-medium tracking-tight leading-[1.05] text-balance">
-          Built for the new search shelf — <span className="font-serif-italic">conversational</span>.
+          The agency behind the checker — <span className="font-serif-italic">built for AI-first search</span>.
         </h2>
+        <p className="text-base text-muted-foreground mt-5 max-w-xl leading-relaxed">
+          QCK is a full-service SEO and AEO/GEO agency. The AI Visibility Checker is a free tool
+          built on the same methodology we use with 100+ brands.{" "}
+          <a
+            href="https://qck.co"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-foreground transition-colors"
+          >
+            Visit qck.co
+          </a>{" "}
+          to learn more about our agency services.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">

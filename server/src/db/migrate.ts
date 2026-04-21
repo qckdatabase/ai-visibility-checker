@@ -37,6 +37,14 @@ CREATE TABLE IF NOT EXISTS config (
   value TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS consents (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  keyword     TEXT NOT NULL,
+  store       TEXT NOT NULL,
+  ip_address  TEXT,
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 CREATE INDEX IF NOT EXISTS idx_queries_category  ON queries(category);
 CREATE INDEX IF NOT EXISTS idx_queries_store    ON queries(store);
 CREATE INDEX IF NOT EXISTS idx_queries_keyword ON queries(keyword);

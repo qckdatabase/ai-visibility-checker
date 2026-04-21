@@ -13,7 +13,7 @@ const Index = () => {
   const [store, setStore] = useState("");
   const [results, setResults] = useState<AiRanking[]>([]);
 
-  const handleCheck = async ({ keyword: k, store: s }: { keyword: string; store: string }) => {
+  const handleCheck = async ({ keyword: k, store: s, consent }: { keyword: string; store: string; consent: boolean }) => {
     setKeyword(k);
     setStore(s);
     setResults([]);
@@ -24,7 +24,7 @@ const Index = () => {
       const res = await fetch("/api/visibility", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ keyword: k, store: s }),
+        body: JSON.stringify({ keyword: k, store: s, consent }),
       });
 
       if (!res.ok) {
