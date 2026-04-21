@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS ranked_brands (
   rank     INTEGER NOT NULL,
   brand    TEXT NOT NULL,
   url      TEXT NOT NULL,
+  reason   TEXT NOT NULL DEFAULT '',
   is_user  BOOLEAN NOT NULL DEFAULT false
 );
 

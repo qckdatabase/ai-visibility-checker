@@ -97,7 +97,7 @@ export async function runPipeline(
     };
 
     // 8. Cache put
-    const record: VisibilityRecord = { keyword, store: resolvedStore, category, result, createdAt: new Date() };
+    const record: VisibilityRecord = { keyword, store: resolvedStore, rawStore: store, category, result, createdAt: new Date() };
     await store_.put(record);
 
     return result;

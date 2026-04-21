@@ -17,6 +17,8 @@ describe("createMemoryStore", () => {
     const record = {
       keyword: "shoes",
       store: "nike.com",
+      rawStore: "Nike",
+      category: "Apparel",
       result: {
         results: [],
         userRank: null,
@@ -24,6 +26,7 @@ describe("createMemoryStore", () => {
         queryId: "x",
         model: "gpt-4o" as const,
         searchedAt: new Date().toISOString(),
+        category: "Apparel",
       },
       createdAt: new Date(),
     };
@@ -37,6 +40,8 @@ describe("createMemoryStore", () => {
     const record = {
       keyword: "Shoes",
       store: "Nike.com/",
+      rawStore: "Nike",
+      category: "Apparel",
       result: {
         results: [],
         userRank: null,
@@ -44,6 +49,7 @@ describe("createMemoryStore", () => {
         queryId: "y",
         model: "gpt-4o" as const,
         searchedAt: new Date().toISOString(),
+        category: "Apparel",
       },
       createdAt: new Date(),
     };
@@ -57,6 +63,8 @@ describe("createMemoryStore", () => {
       await store.put({
         keyword: `k${i}`,
         store: "s.com",
+        rawStore: `store${i}`,
+        category: "Apparel",
         result: {
           results: [],
           userRank: null,
@@ -64,6 +72,7 @@ describe("createMemoryStore", () => {
           queryId: `id${i}`,
           model: "gpt-4o" as const,
           searchedAt: new Date().toISOString(),
+          category: "Apparel",
         },
         createdAt: new Date(),
       });
@@ -71,6 +80,8 @@ describe("createMemoryStore", () => {
     await store.put({
       keyword: "new",
       store: "s.com",
+      rawStore: "new store",
+      category: "Apparel",
       result: {
         results: [],
         userRank: null,
@@ -78,6 +89,7 @@ describe("createMemoryStore", () => {
         queryId: "newid",
         model: "gpt-4o" as const,
         searchedAt: new Date().toISOString(),
+        category: "Apparel",
       },
       createdAt: new Date(),
     });

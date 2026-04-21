@@ -2,7 +2,8 @@ import type { VisibilityResponse } from "../types.js";
 
 export type VisibilityRecord = {
   keyword: string;
-  store: string;
+  store: string;       // resolved domain
+  rawStore: string;   // original user input (e.g. "Lumen Skin")
   category: string;
   result: VisibilityResponse;
   createdAt: Date;
