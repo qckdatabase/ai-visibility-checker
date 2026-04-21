@@ -10,9 +10,8 @@ import AdminDashboard from "./pages/AdminDashboard.tsx";
 import AdminQueries from "./pages/AdminQueries.tsx";
 import AdminAnalytics from "./pages/AdminAnalytics.tsx";
 import AdminSettings from "./pages/AdminSettings.tsx";
-import AdminLeads from "./pages/AdminLeads.tsx";
 import AdminStores from "./pages/AdminStores.tsx";
-import AdminModels from "./pages/AdminModels.tsx";
+import AdminKeywords from "./pages/AdminKeywords.tsx";
 
 const queryClient = new QueryClient();
 
@@ -28,10 +27,8 @@ const App = () => (
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/queries" element={<AdminQueries />} />
           <Route path="/admin/analytics" element={<AdminAnalytics />} />
-          <Route path="/admin/leads" element={<AdminLeads />} />
-          <Route path="/admin/users" element={<AdminLeads />} />
           <Route path="/admin/stores" element={<AdminStores />} />
-          <Route path="/admin/models" element={<AdminModels />} />
+          <Route path="/admin/keywords" element={<AdminKeywords />} />
           <Route path="/admin/settings" element={<AdminSettings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
