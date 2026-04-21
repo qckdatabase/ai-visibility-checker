@@ -70,7 +70,7 @@ const VisibilityChecker = ({ onSubmit, loading }: VisibilityCheckerProps) => {
           variant="spectral"
           size="lg"
           disabled={loading || !keyword.trim() || !store.trim()}
-          className="md:self-stretch md:px-8 group relative"
+          className="md:self-stretch md:h-auto md:px-8 group relative"
         >
           {loading ? (
             <>
