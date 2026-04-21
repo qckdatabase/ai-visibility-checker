@@ -1,0 +1,23 @@
+merge:
+  client: 8080   # Vite (unchanged from vite.config.ts)
+  server: 8787   # Express
+  port: 3000     # single port developer opens in browser
+
+processes:
+  backend:
+    cmd: bun run dev
+    dir: ./server
+    env:
+      PORT: "8787"
+    restart: on-failure
+    ready_when:
+      http: http://localhost:8787/health
+
+  frontend:
+    cmd: bun run dev
+    env:
+      PORT: "8080"
+    depends_on:
+      - backend
+    ready_when:
+      log: "ready in"
