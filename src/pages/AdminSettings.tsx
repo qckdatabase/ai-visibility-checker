@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Check,
@@ -6,16 +6,11 @@ import {
   Gauge,
   Bell,
   ShieldAlert,
-  Server,
-  Database,
-  RefreshCw,
 } from "lucide-react";
 import AdminShell from "@/components/admin/AdminShell";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { adminApi } from "@/lib/api/admin";
-
-const numberFmt = new Intl.NumberFormat("en-US");
 
 const AdminSettings = () => {
   const queryClient = useQueryClient();
@@ -27,6 +22,11 @@ const AdminSettings = () => {
 
   const updateConfig = useMutation({
     mutationFn: adminApi.updateConfig,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "config"] }),
+  });
+
+  const configAction = useMutation({
+    mutationFn: adminApi.configAction,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin", "config"] }),
   });
 
@@ -51,9 +51,71 @@ const AdminSettings = () => {
   });
 
   const [saved, setSaved] = useState(false);
-  const handleSave = () => {
-    setSaved(true);
-    window.setTimeout(() => setSaved(false), 1800);
+  const [saving, setSaving] = useState(false);
+  const [purgeLoading, setPurgeLoading] = useState(false);
+  const [purgeDone, setPurgeDone] = useState(false);
+
+  useEffect(() => {
+    if (!config) return;
+    setRateLimit(String(config.rateLimitChecksPerHour));
+    setMaxResults(String(config.rateLimitMaxResults));
+    setScanTimeout(String(config.rateLimitScanTimeoutMs));
+    setRetention(String(config.queryRetentionDays));
+    setFlags({
+      publicChecker: config.flagPublicChecker,
+      requireSignup: config.flagRequireSignup,
+      competitorTracking: config.flagCompetitorTracking,
+      autoBlockAbuse: config.flagAutoBlockAbuse,
+    });
+    setAlerts({
+      modelDown: config.alertModelDown,
+      errorSpike: config.alertErrorSpike,
+      queueBackup: config.alertQueueBackup,
+      abuseDetected: config.alertAbuseDetected,
+      weeklyDigest: config.alertWeeklyDigest,
+    });
+  }, [config]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await updateConfig.mutateAsync({
+        rateLimitChecksPerHour: Number(rateLimit),
+        rateLimitMaxResults: Number(maxResults),
+        rateLimitScanTimeoutMs: Number(scanTimeout),
+        queryRetentionDays: Number(retention),
+        flagPublicChecker: flags.publicChecker,
+        flagRequireSignup: flags.requireSignup,
+        flagCompetitorTracking: flags.competitorTracking,
+        flagAutoBlockAbuse: flags.autoBlockAbuse,
+        alertModelDown: alerts.modelDown,
+        alertErrorSpike: alerts.errorSpike,
+        alertQueueBackup: alerts.queueBackup,
+        alertAbuseDetected: alerts.abuseDetected,
+        alertWeeklyDigest: alerts.weeklyDigest,
+      });
+      setSaved(true);
+      window.setTimeout(() => setSaved(false), 1800);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleMaintenanceToggle = async () => {
+    await configAction.mutateAsync({
+      action: config?.maintenanceMode ? "disable_maintenance" : "enable_maintenance",
+    });
+  };
+
+  const handlePurgeCache = async () => {
+    setPurgeLoading(true);
+    try {
+      await configAction.mutateAsync({ action: "purge_cache" });
+      setPurgeDone(true);
+      window.setTimeout(() => setPurgeDone(false), 2000);
+    } finally {
+      setPurgeLoading(false);
+    }
   };
 
   const [openaiRotateOpen, setOpenaiRotateOpen] = useState(false);
@@ -97,12 +159,14 @@ const AdminSettings = () => {
       eyebrow="System"
       title="System configuration"
       actions={
-        <Button variant="primary" size="sm" onClick={handleSave}>
+        <Button variant="primary" size="sm" onClick={handleSave} disabled={saving}>
           {saved ? (
             <>
               <Check className="size-3.5" />
               Saved
             </>
+          ) : saving ? (
+            "Saving…"
           ) : (
             "Save changes"
           )}
@@ -111,10 +175,10 @@ const AdminSettings = () => {
     >
       {/* System health */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Stat label="Uptime · 30d" value="99.9%" accent="prism-5" tone="ok" />
-        <Stat label="Server version" value={config?.serverVersion ?? "—"} accent="prism-1" />
         <Stat label="Retention" value={config ? `${config.queryRetentionDays}d` : "—"} accent="prism-4" />
         <Stat label="Admin password" value={config?.adminPasswordSet ? "Set" : "Not set"} accent="prism-2" />
+        <Stat label="Maintenance mode" value={config?.maintenanceMode ? "Active" : "Off"} accent="prism-3" tone={config?.maintenanceMode ? undefined : "ok"} />
+        <Stat label="Server version" value={config?.serverVersion ?? "—"} accent="prism-1" />
       </section>
 
       {/* Rate limits & quotas */}
@@ -352,19 +416,6 @@ const AdminSettings = () => {
         </div>
       </SettingsCard>
 
-      {/* Infrastructure */}
-      <SettingsCard
-        icon={Server}
-        accent="prism-5"
-        title="Infrastructure"
-        description="Where QCK runs."
-      >
-        <ReadonlyRow label="Region" value="us-east-1 · eu-west-1 (failover)" />
-        <ReadonlyRow label="App version" value="v2.4.18" />
-        <ReadonlyRow label="Database" value="Postgres 16 · primary + 2 replicas" icon={Database} />
-        <ReadonlyRow label="Cache" value="Redis 7 cluster · 8 nodes" />
-      </SettingsCard>
-
       {/* Danger zone */}
       <section className="p-6 rounded-3xl border border-prism-3/30 bg-prism-3/5">
         <p className="text-[10px] font-mono uppercase tracking-widest text-prism-3 mb-1">
@@ -382,11 +433,27 @@ const AdminSettings = () => {
             variant="outline"
             size="sm"
             className="border-prism-3/40 text-prism-3 hover:bg-prism-3/10"
+            onClick={handleMaintenanceToggle}
+            disabled={configAction.isPending}
           >
-            Enable maintenance mode
+            {config?.maintenanceMode ? "Disable maintenance mode" : "Enable maintenance mode"}
           </Button>
-          <Button variant="ghost" size="sm">
-            Purge query cache
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handlePurgeCache}
+            disabled={purgeLoading || purgeDone}
+          >
+            {purgeDone ? (
+              <>
+                <Check className="size-3.5" />
+                Purged
+              </>
+            ) : purgeLoading ? (
+              "Purging…"
+            ) : (
+              "Purge query cache"
+            )}
           </Button>
         </div>
       </section>
@@ -521,24 +588,6 @@ const Toggle = ({
       />
     </span>
   </button>
-);
-
-const ReadonlyRow = ({
-  label,
-  value,
-  icon: Icon,
-}: {
-  label: string;
-  value: string;
-  icon?: typeof Database;
-}) => (
-  <div className="flex items-center justify-between p-3.5 rounded-2xl border hairline bg-surface">
-    <div className="flex items-center gap-2">
-      {Icon && <Icon className="size-3.5 text-muted-foreground" />}
-      <span className="text-sm font-medium">{label}</span>
-    </div>
-    <span className="text-sm font-mono text-muted-foreground">{value}</span>
-  </div>
 );
 
 export default AdminSettings;

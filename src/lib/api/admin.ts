@@ -71,6 +71,23 @@ export interface ConfigResponse {
   adminPasswordSet: boolean;
   queryRetentionDays: number;
   serverVersion: string;
+  // Rate limits
+  rateLimitChecksPerHour: number;
+  rateLimitMaxResults: number;
+  rateLimitScanTimeoutMs: number;
+  // Feature flags
+  flagPublicChecker: boolean;
+  flagRequireSignup: boolean;
+  flagCompetitorTracking: boolean;
+  flagAutoBlockAbuse: boolean;
+  // Operator alerts
+  alertModelDown: boolean;
+  alertErrorSpike: boolean;
+  alertQueueBackup: boolean;
+  alertAbuseDetected: boolean;
+  alertWeeklyDigest: boolean;
+  // Danger zone
+  maintenanceMode: boolean;
 }
 
 async function fetchJSON<T>(url: string, options?: RequestInit): Promise<T> {
@@ -115,8 +132,27 @@ export const adminApi = {
 
   config: () => fetchJSON<ConfigResponse>(`${BASE}/config`),
 
-  updateConfig: (body: { openaiApiKey?: string; adminPassword?: string; queryRetentionDays?: number }) =>
+  updateConfig: (body: Partial<{
+  openaiApiKey: string;
+  adminPassword: string;
+  queryRetentionDays: number;
+  rateLimitChecksPerHour: number;
+  rateLimitMaxResults: number;
+  rateLimitScanTimeoutMs: number;
+  flagPublicChecker: boolean;
+  flagRequireSignup: boolean;
+  flagCompetitorTracking: boolean;
+  flagAutoBlockAbuse: boolean;
+  alertModelDown: boolean;
+  alertErrorSpike: boolean;
+  alertQueueBackup: boolean;
+  alertAbuseDetected: boolean;
+  alertWeeklyDigest: boolean;
+}>) =>
     fetchJSON<{ ok: boolean }>(`${BASE}/config`, { method: "PATCH", body: JSON.stringify(body) }),
+
+  configAction: (body: { action: "enable_maintenance" | "disable_maintenance" | "purge_cache" }) =>
+    fetchJSON<{ ok: boolean }>(`${BASE}/config/actions`, { method: "POST", body: JSON.stringify(body) }),
 
   login: (password: string) =>
     fetchJSON<{ ok: boolean }>(`${BASE}/login`, {

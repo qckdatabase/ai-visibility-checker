@@ -6,13 +6,74 @@ import { getEnv } from "../../lib/env.js";
 
 const router = Router();
 
+// Map camelCase -> config key name
+const CONFIG_KEYS: Record<string, string> = {
+  openaiApiKey: "openai_api_key",
+  queryRetentionDays: "query_retention_days",
+  rateLimitChecksPerHour: "rate_limit_checks_per_hour",
+  rateLimitMaxResults: "rate_limit_max_results",
+  rateLimitScanTimeoutMs: "rate_limit_scan_timeout_ms",
+  flagPublicChecker: "flag_public_checker",
+  flagRequireSignup: "flag_require_signup",
+  flagCompetitorTracking: "flag_competitor_tracking",
+  flagAutoBlockAbuse: "flag_auto_block_abuse",
+  alertModelDown: "alert_model_down",
+  alertErrorSpike: "alert_error_spike",
+  alertQueueBackup: "alert_queue_backup",
+  alertAbuseDetected: "alert_abuse_detected",
+  alertWeeklyDigest: "alert_weekly_digest",
+  maintenanceMode: "maintenance_mode",
+};
+
+async function getConfigValue(pool: ReturnType<typeof getPool>, key: string): Promise<string> {
+  const result = await pool.query<{ value: string }>(
+    "SELECT value FROM config WHERE key = $1 LIMIT 1",
+    [key],
+  );
+  return result.rows[0]?.value ?? "";
+}
+
+async function setConfigValue(pool: ReturnType<typeof getPool>, key: string, value: string) {
+  await pool.query(
+    `INSERT INTO config (key, value) VALUES ($1, $2)
+     ON CONFLICT (key) DO UPDATE SET value = $2`,
+    [key, value],
+  );
+}
+
+function parseBool(value: string): boolean {
+  return value === "true";
+}
+
+function toNumber(value: string, fallback: number): number {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
 router.get("/config", async (_req, res) => {
   const pool = getPool();
-  const keyResult = await pool.query<{ value: string }>(
-    "SELECT value FROM config WHERE key = 'openai_api_key' LIMIT 1",
-  );
-  const openaiKey = keyResult.rows[0]?.value ?? "";
   const env = getEnv();
+
+  const [openaiKey, rateLimitChecks, rateLimitMax, rateLimitTimeout,
+    retention, flagPublic, flagSignup, flagCompetitor, flagAutoBlock,
+    alertModelDown, alertErrorSpike, alertQueueBackup, alertAbuse, alertDigest,
+    maintenanceMode] = await Promise.all([
+    getConfigValue(pool, "openai_api_key"),
+    getConfigValue(pool, "rate_limit_checks_per_hour"),
+    getConfigValue(pool, "rate_limit_max_results"),
+    getConfigValue(pool, "rate_limit_scan_timeout_ms"),
+    getConfigValue(pool, "query_retention_days"),
+    getConfigValue(pool, "flag_public_checker"),
+    getConfigValue(pool, "flag_require_signup"),
+    getConfigValue(pool, "flag_competitor_tracking"),
+    getConfigValue(pool, "flag_auto_block_abuse"),
+    getConfigValue(pool, "alert_model_down"),
+    getConfigValue(pool, "alert_error_spike"),
+    getConfigValue(pool, "alert_queue_backup"),
+    getConfigValue(pool, "alert_abuse_detected"),
+    getConfigValue(pool, "alert_weekly_digest"),
+    getConfigValue(pool, "maintenance_mode"),
+  ]);
 
   const hasPassword = !!(env.ADMIN_PASSWORD_HASH || (await getAdminPasswordHash()));
 
@@ -22,8 +83,25 @@ router.get("/config", async (_req, res) => {
       ? `sk-${openaiKey.slice(0, 10)}***${openaiKey.slice(-4)}`
       : "",
     adminPasswordSet: hasPassword,
-    queryRetentionDays: 90,
+    queryRetentionDays: toNumber(retention, 90),
     serverVersion: "1.0.0",
+    // Rate limits
+    rateLimitChecksPerHour: toNumber(rateLimitChecks, 60),
+    rateLimitMaxResults: toNumber(rateLimitMax, 10),
+    rateLimitScanTimeoutMs: toNumber(rateLimitTimeout, 8000),
+    // Feature flags
+    flagPublicChecker: parseBool(flagPublic),
+    flagRequireSignup: parseBool(flagSignup),
+    flagCompetitorTracking: parseBool(flagCompetitor),
+    flagAutoBlockAbuse: parseBool(flagAutoBlock),
+    // Operator alerts
+    alertModelDown: parseBool(alertModelDown),
+    alertErrorSpike: parseBool(alertErrorSpike),
+    alertQueueBackup: parseBool(alertQueueBackup),
+    alertAbuseDetected: parseBool(alertAbuse),
+    alertWeeklyDigest: parseBool(alertDigest),
+    // Danger zone
+    maintenanceMode: parseBool(maintenanceMode),
   });
 });
 
@@ -31,6 +109,21 @@ const PatchConfigSchema = z.object({
   openaiApiKey: z.string().optional(),
   queryRetentionDays: z.number().int().positive().optional(),
   adminPassword: z.string().min(8, "password must be at least 8 characters").optional(),
+  // Rate limits
+  rateLimitChecksPerHour: z.number().int().positive().optional(),
+  rateLimitMaxResults: z.number().int().positive().optional(),
+  rateLimitScanTimeoutMs: z.number().int().positive().optional(),
+  // Feature flags
+  flagPublicChecker: z.boolean().optional(),
+  flagRequireSignup: z.boolean().optional(),
+  flagCompetitorTracking: z.boolean().optional(),
+  flagAutoBlockAbuse: z.boolean().optional(),
+  // Operator alerts
+  alertModelDown: z.boolean().optional(),
+  alertErrorSpike: z.boolean().optional(),
+  alertQueueBackup: z.boolean().optional(),
+  alertAbuseDetected: z.boolean().optional(),
+  alertWeeklyDigest: z.boolean().optional(),
 });
 
 router.patch("/config", async (req, res) => {
@@ -41,19 +134,54 @@ router.patch("/config", async (req, res) => {
   }
 
   const pool = getPool();
-  const { openaiApiKey, adminPassword } = parsed.data;
+  const updates = parsed.data;
 
-  if (openaiApiKey !== undefined) {
-    await pool.query(
-      `INSERT INTO config (key, value) VALUES ('openai_api_key', $1)
-       ON CONFLICT (key) DO UPDATE SET value = $1`,
-      [openaiApiKey],
-    );
+  // OpenAI key
+  if (updates.openaiApiKey !== undefined) {
+    await setConfigValue(pool, "openai_api_key", updates.openaiApiKey);
   }
 
-  if (adminPassword) {
-    const hash = await hashPassword(adminPassword);
+  // Admin password
+  if (updates.adminPassword) {
+    const hash = await hashPassword(updates.adminPassword);
     await setAdminPasswordHash(hash);
+  }
+
+  // All other config keys: iterate CONFIG_KEYS and write any that are present
+  const writePromises: Promise<unknown>[] = [];
+  for (const [camelKey, configKey] of Object.entries(CONFIG_KEYS)) {
+    if (camelKey === "openaiApiKey" || camelKey === "queryRetentionDays" || camelKey === "adminPassword") continue;
+    const value = (updates as Record<string, unknown>)[camelKey];
+    if (value !== undefined) {
+      writePromises.push(setConfigValue(pool, configKey, String(value)));
+    }
+  }
+
+  await Promise.all(writePromises);
+  res.json({ ok: true });
+});
+
+const ConfigActionSchema = z.object({
+  action: z.enum(["enable_maintenance", "disable_maintenance", "purge_cache"]),
+});
+
+router.post("/config/actions", async (req, res) => {
+  const parsed = ConfigActionSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "invalid_input", message: parsed.error.errors[0].message });
+    return;
+  }
+
+  const pool = getPool();
+  const { action } = parsed.data;
+
+  if (action === "enable_maintenance") {
+    await setConfigValue(pool, "maintenance_mode", "true");
+  } else if (action === "disable_maintenance") {
+    await setConfigValue(pool, "maintenance_mode", "false");
+  } else if (action === "purge_cache") {
+    // For now, clear cached flags on all queries (soft clear)
+    await pool.query("UPDATE queries SET cached = false");
   }
 
   res.json({ ok: true });

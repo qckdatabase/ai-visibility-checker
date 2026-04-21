@@ -49,6 +49,50 @@ const SEED_SQL = `
 INSERT INTO config (key, value)
 VALUES ('openai_api_key', '')
 ON CONFLICT (key) DO NOTHING;
+
+-- Seed additional default configuration values (JSON-encoded strings).
+INSERT INTO config (key, value)
+VALUES ('rate_limit_checks_per_hour', '"60"')
+ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO config (key, value)
+VALUES ('rate_limit_max_results', '"10"')
+ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO config (key, value)
+VALUES ('rate_limit_scan_timeout_ms', '"8000"')
+ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO config (key, value)
+VALUES ('query_retention_days', '"90"')
+ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO config (key, value)
+VALUES ('flag_public_checker', '"true"')
+ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO config (key, value)
+VALUES ('flag_require_signup', '"false"')
+ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO config (key, value)
+VALUES ('flag_competitor_tracking', '"true"')
+ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO config (key, value)
+VALUES ('flag_auto_block_abuse', '"true"')
+ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO config (key, value)
+VALUES ('alert_model_down', '"true"')
+ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO config (key, value)
+VALUES ('alert_error_spike', '"true"')
+ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO config (key, value)
+VALUES ('alert_queue_backup', '"true"')
+ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO config (key, value)
+VALUES ('alert_abuse_detected', '"true"')
+ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO config (key, value)
+VALUES ('alert_weekly_digest', '"false"')
+ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
+INSERT INTO config (key, value)
+VALUES ('maintenance_mode', '"false"')
+ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
 `;
 
 export async function migrate(): Promise<void> {
