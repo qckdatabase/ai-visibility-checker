@@ -9,6 +9,7 @@ import { groundedSearch } from "./search.js";
 import { formatToJSON } from "./format.js";
 import { getStore } from "../store/index.js";
 import type { VisibilityRecord } from "../store/types.js";
+import { PipelineError } from "../lib/errors.js";
 
 const PIPELINE_TIMEOUT_MS = 45_000;
 
@@ -92,13 +93,4 @@ export async function runPipeline(
   }
 }
 
-export class PipelineError extends Error {
-  constructor(
-    public code: "upstream_failed" | "internal",
-    message: string,
-    public timings?: { stage1Ms?: number; stage2Ms?: number },
-  ) {
-    super(message);
-    this.name = "PipelineError";
-  }
-}
+export { PipelineError } from "../lib/errors.js";
