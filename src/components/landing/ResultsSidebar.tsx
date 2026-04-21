@@ -7,6 +7,7 @@ export interface AiRanking {
   rank: number;
   brand: string;
   reason: string;
+  url: string;
   isUser?: boolean;
 }
 
@@ -197,7 +198,7 @@ const ResultsList = ({ results, store }: { results: AiRanking[]; store: string }
               </p>
             </div>
             <a
-              href={`https://www.google.com/search?q=${encodeURIComponent(r.brand + " official website")}`}
+              href={r.url || `https://www.google.com/search?q=${encodeURIComponent(r.brand)}`}
               target="_blank"
               rel="noreferrer"
               onClick={(e) => e.stopPropagation()}

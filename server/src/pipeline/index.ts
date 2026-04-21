@@ -37,14 +37,14 @@ export async function runPipeline(
 
     // 2. Stage 1 — grounded search
     const stage1Start = Date.now();
-    const rawProse = await groundedSearch(keyword, store);
+    const { text: rawProse, urls: sourceUrls } = await groundedSearch(keyword, store);
     const stage1Ms = Date.now() - stage1Start;
 
     // 3. Stage 2 — format to JSON
     const stage2Start = Date.now();
     let stage2Output: Stage2Output;
     try {
-      stage2Output = await formatToJSON(rawProse, store);
+      stage2Output = await formatToJSON(rawProse, store, sourceUrls);
     } catch (err) {
       throw new PipelineError("upstream_failed", `Stage 2 failed: ${err}`, { stage1Ms });
     }

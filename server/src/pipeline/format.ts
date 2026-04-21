@@ -16,9 +16,10 @@ const FORMAT_SCHEMA = {
           rank: { type: "integer" },
           brand: { type: "string" },
           reason: { type: "string" },
+          url: { type: "string" },
           isUser: { type: "boolean" },
         },
-        required: ["rank", "brand", "reason", "isUser"],
+        required: ["rank", "brand", "reason", "url", "isUser"],
         additionalProperties: false,
       },
     },
@@ -28,11 +29,23 @@ const FORMAT_SCHEMA = {
 } as const;
 
 export type Stage2Output = {
-  rankings: Array<{ rank: number; brand: string; reason: string; isUser: boolean }>;
+  rankings: Array<{ rank: number; brand: string; reason: string; url: string; isUser: boolean }>;
 };
 
-export async function formatToJSON(rawProse: string, userStore: string): Promise<Stage2Output> {
+export async function formatToJSON(
+  rawProse: string,
+  userStore: string,
+  sourceUrls: Map<string, string>,
+): Promise<Stage2Output> {
   const client = getOpenAIClient();
+
+  const urlsList =
+    sourceUrls.size > 0
+      ? "Source URLs from web search:\n" +
+        Array.from(sourceUrls.entries())
+          .map(([name, url]) => `  - ${name}: ${url}`)
+          .join("\n")
+      : "No source URLs available.";
 
   const response = await client.responses.create({
     model: "gpt-4o",
@@ -40,9 +53,11 @@ export async function formatToJSON(rawProse: string, userStore: string): Promise
       {
         role: "system",
         content:
-          "You are a JSON extractor. Extract the ranked list from the following text as structured JSON. " +
-          `If the user's store "${userStore}" appears, set isUser: true on that entry. ` +
-          "Return ONLY valid JSON matching the schema.",
+          "You are a JSON extractor. Extract the ranked list from the following text as structured JSON.\n" +
+          `If the user's store "${userStore}" appears, set isUser: true on that entry.\n` +
+          `For each brand, try to find its source URL from the URL list below and include it as "url". ` +
+          "If no URL matches, use an empty string for url. Return ONLY valid JSON matching the schema.\n\n" +
+          urlsList,
       },
       { role: "user", content: rawProse },
     ],

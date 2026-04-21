@@ -5,6 +5,7 @@ export type AiRanking = {
   rank: number;
   brand: string;
   reason: string;
+  url: string;
   isUser: boolean;
 };
 
