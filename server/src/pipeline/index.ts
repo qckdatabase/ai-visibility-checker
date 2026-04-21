@@ -1,5 +1,5 @@
 /**
- * Orchestrates: cache check → stage 1 → stage 2 → fuzzy match → cache put.
+ * Orchestrates: cache check → domain resolve → stage 1 → stage 2 → fuzzy match → cache put.
  * Total wall clock capped at 45s via AbortController.
  */
 import { v4 as uuidv4 } from "uuid";
@@ -10,6 +10,7 @@ import { formatToJSON } from "./format.js";
 import { getStore } from "../store/index.js";
 import type { VisibilityRecord } from "../store/types.js";
 import { PipelineError } from "../lib/errors.js";
+import { resolveDomain } from "../lib/resolveDomain.js";
 
 const PIPELINE_TIMEOUT_MS = 45_000;
 
@@ -35,29 +36,40 @@ export async function runPipeline(
       return { ...cached.result, cached: true };
     }
 
-    // 2. Stage 1 — grounded search
+    // 2. Resolve store domain (handles brand-name → domain)
+    const resolvedStore = await resolveDomain(store);
+    if (resolvedStore === "unknown") {
+      throw new PipelineError(
+        "invalid_input",
+        `Could not resolve domain for store: ${store}`,
+        {},
+      );
+    }
+
+    // 3. Stage 1 — grounded search
     const stage1Start = Date.now();
-    const { text: rawProse, urls: sourceUrls } = await groundedSearch(keyword, store);
+    const { text: rawProse, urls: sourceUrls } = await groundedSearch(keyword, resolvedStore);
     const stage1Ms = Date.now() - stage1Start;
 
-    // 3. Stage 2 — format to JSON
+    // 4. Stage 2 — format to JSON
     const stage2Start = Date.now();
     let stage2Output: Stage2Output;
     try {
-      stage2Output = await formatToJSON(rawProse, store, sourceUrls);
+      stage2Output = await formatToJSON(rawProse, resolvedStore, sourceUrls);
     } catch (err) {
       throw new PipelineError("upstream_failed", `Stage 2 failed: ${err}`, { stage1Ms });
     }
     const stage2Ms = Date.now() - stage2Start;
+    const { category } = stage2Output;
 
-    // 4. Post-process: fuzzy match isUser
+    // 5. Post-process: fuzzy match isUser
     let rankings = stage2Output.rankings.map((r) => ({ ...r }));
-    const userMatchedIndex = rankings.findIndex((r) => fuzzyMatch(store, r.brand));
+    const userMatchedIndex = rankings.findIndex((r) => fuzzyMatch(resolvedStore, r.brand));
     if (userMatchedIndex !== -1) {
       rankings[userMatchedIndex] = { ...rankings[userMatchedIndex], isUser: true };
     }
 
-    // 5. Validate entry count
+    // 6. Validate entry count
     if (rankings.length < 5) {
       throw new PipelineError(
         "upstream_failed",
@@ -69,7 +81,7 @@ export async function runPipeline(
       rankings = rankings.slice(0, 10);
     }
 
-    // 6. Compute userRank
+    // 7. Compute userRank
     const userEntry = rankings.find((r) => r.isUser);
     const userRank = userEntry ? userEntry.rank : null;
 
@@ -81,10 +93,11 @@ export async function runPipeline(
       queryId: uuidv4(),
       model: "gpt-4o",
       searchedAt,
+      category,
     };
 
-    // 7. Cache put
-    const record: VisibilityRecord = { keyword, store, result, createdAt: new Date() };
+    // 8. Cache put
+    const record: VisibilityRecord = { keyword, store: resolvedStore, category, result, createdAt: new Date() };
     await store_.put(record);
 
     return result;

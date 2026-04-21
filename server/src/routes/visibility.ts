@@ -36,12 +36,13 @@ router.post("/api/visibility", async (req, res) => {
     const start = Date.now();
     const result: VisibilityResponse = await runPipeline(keyword, store);
     // TODO: persist query to analytics DB
-    log({ keyword, store, cached: result.cached, resultCount: result.results.length, totalMs: Date.now() - start });
+    log({ keyword, store, cached: result.cached, resultCount: result.results.length, category: result.category, totalMs: Date.now() - start });
     return res.json(result);
   } catch (err: unknown) {
     if (err instanceof PipelineError) {
       log({ error: err.code, message: err.message });
-      return res.status(502).json(errorResponse(err.code, err.message, 502));
+      const status = err.code === "invalid_input" ? 400 : 502;
+      return res.status(status).json(errorResponse(err.code, err.message, status));
     }
     if (err instanceof Error) {
       log({ error: "upstream_failed", message: err.message });

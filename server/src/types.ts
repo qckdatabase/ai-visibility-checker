@@ -16,6 +16,7 @@ export type VisibilityResponse = {
   queryId: string;
   model: "gpt-4o";
   searchedAt: string;      // ISO timestamp
+  category: string;
 };
 
 export type ErrorCode =

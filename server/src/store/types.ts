@@ -3,6 +3,7 @@ import type { VisibilityResponse } from "../types.js";
 export type VisibilityRecord = {
   keyword: string;
   store: string;
+  category: string;
   result: VisibilityResponse;
   createdAt: Date;
 };
