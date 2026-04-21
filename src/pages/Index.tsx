@@ -4,7 +4,6 @@ import Hero from "@/components/landing/Hero";
 import FeatureGrid from "@/components/landing/FeatureGrid";
 import SiteFooter from "@/components/landing/SiteFooter";
 import ResultsSidebar, { type AiRanking } from "@/components/landing/ResultsSidebar";
-import { generateMockResults } from "@/lib/mockData";
 
 const Index = () => {
   const [open, setOpen] = useState(false);
@@ -13,17 +12,33 @@ const Index = () => {
   const [store, setStore] = useState("");
   const [results, setResults] = useState<AiRanking[]>([]);
 
-  const handleCheck = ({ keyword: k, store: s }: { keyword: string; store: string }) => {
+  const handleCheck = async ({ keyword: k, store: s }: { keyword: string; store: string }) => {
     setKeyword(k);
     setStore(s);
     setResults([]);
     setLoading(true);
     setOpen(true);
-    // Simulate AI scan
-    window.setTimeout(() => {
-      setResults(generateMockResults(s));
+
+    try {
+      const res = await fetch("/api/visibility", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ keyword: k, store: s }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ message: "Request failed" }));
+        throw new Error(err.message || `HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+      setResults(data.results);
+    } catch (err) {
+      console.error("Visibility check failed:", err);
+      setResults([]);
+    } finally {
       setLoading(false);
-    }, 1800);
+    }
   };
 
   return (
