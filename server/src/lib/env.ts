@@ -9,6 +9,7 @@ const EnvSchema = z.object({
   DATABASE_URL: z.string().optional(),
   JWT_SECRET: z.string().optional(),
   ADMIN_PASSWORD_HASH: z.string().optional(),
+  STATIC_DIR: z.string().optional(),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

@@ -1,4 +1,6 @@
 import "dotenv/config";
+import path from "node:path";
+import fs from "node:fs";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -45,6 +47,18 @@ app.use("/api/admin", adminAuth, queriesRouter);
 app.use("/api/admin", adminAuth, keywordsRouter);
 app.use("/api/admin", adminAuth, storesRouter);
 app.use("/api/admin", adminAuth, configRouter);
+
+if (env.STATIC_DIR) {
+  const staticDir = path.resolve(env.STATIC_DIR);
+  const indexHtml = path.join(staticDir, "index.html");
+  if (!fs.existsSync(indexHtml)) {
+    throw new Error(`STATIC_DIR does not contain index.html: ${indexHtml}`);
+  }
+  app.use(express.static(staticDir, { index: false, maxAge: "1h" }));
+  app.get(/^\/(?!api\/).*/, (_req, res) => {
+    res.sendFile(indexHtml);
+  });
+}
 
 app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error(JSON.stringify({ error: "internal", message: String(err) }));

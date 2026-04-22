@@ -9,7 +9,11 @@ export function getPool(): Pool {
   if (!env.DATABASE_URL) {
     throw new Error("DATABASE_URL is not set");
   }
-  pool = new Pool({ connectionString: env.DATABASE_URL });
+  const needsSsl = /supabase|render|neon|railway|amazonaws|sslmode=require/i.test(env.DATABASE_URL);
+  pool = new Pool({
+    connectionString: env.DATABASE_URL,
+    ssl: needsSsl ? { rejectUnauthorized: false } : undefined,
+  });
   pool.on("error", (err) => {
     console.error(JSON.stringify({ event: "pg_pool_error", error: err.message }));
   });
