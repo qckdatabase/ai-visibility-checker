@@ -42,6 +42,7 @@ const VisibilityChecker = ({ onSubmit, loading }: VisibilityCheckerProps) => {
           />
         </div>
 
+        <div className="md:hidden h-px mx-3 bg-border" />
         <div className="hidden md:block w-px self-center h-8 bg-border" />
 
         <div className="flex-1 h-12 flex items-center gap-3 px-5 rounded-2xl hover:bg-surface-muted/60 transition-colors">
@@ -91,7 +92,7 @@ const VisibilityChecker = ({ onSubmit, loading }: VisibilityCheckerProps) => {
         ))}
       </div>
 
-      <div className="mt-8 flex items-center justify-center gap-2.5 whitespace-nowrap">
+      <div className="mt-8 px-4 flex items-start md:items-center justify-center gap-2.5 md:whitespace-nowrap text-center md:text-left">
         <input
           id="consent"
           type="checkbox"
