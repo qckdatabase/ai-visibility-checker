@@ -34,9 +34,79 @@ const NAV: Array<{
   },
 ];
 
-const AdminSidebar = () => {
+interface SidebarContentProps {
+  onClose?: () => void;
+}
+
+const SidebarContent = ({ onClose }: SidebarContentProps) => {
   const location = useLocation();
+
+  return (
+    <>
+      <div className={styles.header}>
+        <div className={styles.brand}>
+          <div className={styles.brandWrap}>
+            <span className={styles.logoMark}>
+              <img src="/qck-light-logo.png" alt="QCK" />
+            </span>
+          </div>
+          <span className={styles.tag}>Admin</span>
+          {onClose && (
+            <button
+              className={styles.closeButton}
+              onClick={onClose}
+              aria-label="Close menu"
+            >
+              <X size={18} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className={styles.navLabel}>Manage</div>
+      <nav className={styles.nav}>
+        {NAV.map((group) =>
+          group.items.map((item) => {
+            const Icon = item.icon;
+            const isActive =
+              location.pathname === item.to ||
+              (item.to === "/admin/dashboard" &&
+                location.pathname === "/admin");
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                onClick={onClose}
+                className={`${styles.navItem} ${
+                  isActive ? styles.active : ""
+                }`}
+                aria-current={isActive ? "page" : undefined}
+              >
+                <Icon size={18} />
+                <span>{item.label}</span>
+              </NavLink>
+            );
+          })
+        )}
+      </nav>
+
+      <div className={styles.footer}>
+        <div className={styles.userPill} title="admin@qck.co">
+          <span className={styles.userDot} aria-hidden />
+          <span className={styles.userEmail}>admin@qck.co</span>
+        </div>
+        <Link to="/admin" className={styles.logout} onClick={onClose}>
+          <LogOut size={18} />
+          <span>Logout</span>
+        </Link>
+      </div>
+    </>
+  );
+};
+
+const AdminSidebar = () => {
   const [open, setOpen] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     setOpen(false);
@@ -81,61 +151,12 @@ const AdminSidebar = () => {
         />
       )}
 
-      <aside className={`${styles.sidebar} ${open ? styles.open : ""}`}>
-        <div className={styles.header}>
-          <div className={styles.brand}>
-            <div className={styles.brandWrap}>
-              <span className={styles.logoMark}>
-                <img src="/qck-light-logo.png" alt="QCK" />
-              </span>
-            </div>
-            <span className={styles.tag}>Admin</span>
-            <button
-              className={styles.closeButton}
-              onClick={() => setOpen(false)}
-              aria-label="Close menu"
-            >
-              <X size={18} />
-            </button>
-          </div>
-        </div>
+      <aside className={`${styles.mobileDrawer} ${open ? styles.open : ""}`}>
+        <SidebarContent onClose={() => setOpen(false)} />
+      </aside>
 
-        <div className={styles.navLabel}>Manage</div>
-        <nav className={styles.nav}>
-          {NAV.map((group) =>
-            group.items.map((item) => {
-              const Icon = item.icon;
-              const isActive =
-                location.pathname === item.to ||
-                (item.to === "/admin/dashboard" &&
-                  location.pathname === "/admin");
-              return (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  className={`${styles.navItem} ${
-                    isActive ? styles.active : ""
-                  }`}
-                  aria-current={isActive ? "page" : undefined}
-                >
-                  <Icon size={18} />
-                  <span>{item.label}</span>
-                </NavLink>
-              );
-            })
-          )}
-        </nav>
-
-        <div className={styles.footer}>
-          <div className={styles.userPill} title="admin@qck.co">
-            <span className={styles.userDot} aria-hidden />
-            <span className={styles.userEmail}>admin@qck.co</span>
-          </div>
-          <Link to="/admin" className={styles.logout}>
-            <LogOut size={18} />
-            <span>Logout</span>
-          </Link>
-        </div>
+      <aside className={styles.sidebar}>
+        <SidebarContent />
       </aside>
     </>
   );
