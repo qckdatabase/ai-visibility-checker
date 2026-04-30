@@ -188,7 +188,7 @@ const ResultsList = ({ results, store }: { results: AiRanking[]; store: string }
               <div className="flex items-center gap-2 flex-wrap">
                 <p className="text-sm font-semibold truncate">{r.brand}</p>
                 {r.isUser && (
-                  <span className="px-1.5 py-0.5 rounded text-[9px] font-mono uppercase tracking-widest bg-rule-warning text-white">
+                  <span className="px-1.5 py-0.5 rounded text-[9px] font-mono uppercase tracking-widest bg-qck-yellow text-qck-dark">
                     You
                   </span>
                 )}
