@@ -25,6 +25,10 @@
   display: none;
 }
 
+.mobileDrawer {
+  display: none;
+}
+
 .mobileBrand {
   display: flex;
   align-items: center;
@@ -248,6 +252,7 @@
   }
 
   .mobileDrawer {
+    display: flex;
     position: fixed;
     top: 0;
     left: 0;
@@ -256,7 +261,6 @@
     background: hsl(var(--qck-dark));
     border-right: 1px solid hsl(var(--qck-dark-blue));
     color: hsl(var(--qck-white));
-    display: flex;
     flex-direction: column;
     z-index: 60;
     transform: translateX(-100%);
