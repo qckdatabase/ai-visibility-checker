@@ -1,22 +1,45 @@
 merge:
-  client: 8080   # Vite (unchanged from vite.config.ts)
-  server: 8787   # Express
-  port: 3000     # single port developer opens in browser
+  client: 8080            # Vite (matches vite.config.ts)
+  server: 8787            # Express (matches server/src/lib/env.ts default)
+  port: 3000              # local merged port; cloud platforms override via $PORT
+  api_prefixes:
+    - /api                # /api/visibility, /api/admin/*
+    - /health             # backend health probe
+    - /top-stores         # landing router
 
 processes:
   backend:
     cmd: bun run dev
     dir: ./server
-    # Secrets and config live in server/.env (gitignored). Copy server/.env.example.
+    # Secrets in server/.env (gitignored); server self-loads via `import "dotenv/config"`.
     restart: on-failure
+    max_restarts: 10
+    shutdown_timeout: 10
     ready_when:
       http: http://localhost:8787/health
+    ready_timeout: 30
 
   frontend:
     cmd: bun run dev
     env:
       PORT: "8080"
-    depends_on:
-      - backend
+    restart: on-failure
+    max_restarts: 10
+    shutdown_timeout: 10
     ready_when:
       log: "ready in"
+    ready_timeout: 30
+
+  # Public URL for the merged port. tunnel binary spawns a background daemon;
+  # the trap ensures `tunnel stop` runs on SIGTERM/INT so the daemon and unix
+  # socket are cleaned up when proc-compose shuts down.
+  tunnel:
+    cmd: bash -c 'trap "tunnel stop --name qck" EXIT TERM INT; tunnel http 3000 --name qck; wait'
+    depends_on:
+      - merge-port
+    restart: on-failure
+    max_restarts: 5
+    shutdown_timeout: 10
+    ready_when:
+      http: http://localhost:3000/health
+    ready_timeout: 30

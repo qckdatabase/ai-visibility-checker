@@ -20,7 +20,7 @@ import configRouter from "./routes/admin/config.js";
 
 const env = getEnv();
 
-const app = express();
+export const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
@@ -65,14 +65,24 @@ app.use((err: unknown, _req: express.Request, res: express.Response, _next: expr
   res.status(500).json({ error: "internal", message: "An unexpected error occurred" });
 });
 
-app.listen(env.PORT, async () => {
-  if (env.STORE_DRIVER === "postgres") {
-    await migrate();
-  }
-  console.log(JSON.stringify({
-    event: "server_start",
-    port: env.PORT,
-    storeDriver: env.STORE_DRIVER,
-    logLevel: env.LOG_LEVEL,
-  }));
-});
+let migratePromise: Promise<void> | null = null;
+export function ensureMigrated(): Promise<void> {
+  if (env.STORE_DRIVER !== "postgres") return Promise.resolve();
+  if (!migratePromise) migratePromise = migrate();
+  return migratePromise;
+}
+
+const isVercel = !!process.env.VERCEL;
+if (!isVercel) {
+  app.listen(env.PORT, async () => {
+    await ensureMigrated();
+    console.log(JSON.stringify({
+      event: "server_start",
+      port: env.PORT,
+      storeDriver: env.STORE_DRIVER,
+      logLevel: env.LOG_LEVEL,
+    }));
+  });
+}
+
+export default app;

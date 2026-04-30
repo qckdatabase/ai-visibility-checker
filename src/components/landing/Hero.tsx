@@ -37,8 +37,9 @@ const Hero = ({ onCheck, loading }: HeroProps) => {
           className="max-w-4xl mx-auto text-5xl sm:text-6xl md:text-7xl font-medium tracking-tight leading-[0.95] text-balance animate-fade-in-up"
           style={{ animationDelay: "80ms" }}
         >
-          Is your store visible in{" "}
-          <span className="font-serif-italic">ChatGPT?</span>
+          Is your store
+          <br />
+          visible in <span className="font-serif-italic">ChatGPT?</span>
         </h1>
 
         <p
@@ -54,7 +55,7 @@ const Hero = ({ onCheck, loading }: HeroProps) => {
         </div>
 
         <div
-          className="pt-10 flex flex-col items-center gap-4 animate-fade-in"
+          className="flex flex-col items-center gap-4 animate-fade-in"
           style={{ animationDelay: "420ms" }}
         >
           <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-muted-foreground">

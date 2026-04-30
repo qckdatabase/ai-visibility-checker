@@ -28,11 +28,11 @@ const STEPS = [
 const Methodology = () => (
   <section id="methodology" className="px-6 md:px-10 py-24 border-t hairline">
     <div className="max-w-6xl mx-auto">
-      <div className="max-w-2xl mb-14">
+      <div className="mb-14">
         <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-muted-foreground mb-4">
           Methodology
         </p>
-        <h2 className="text-4xl md:text-5xl font-medium tracking-tight leading-[1.05] text-balance">
+        <h2 className="text-4xl md:text-5xl font-medium tracking-tight leading-[1.05] md:whitespace-nowrap">
           How a QCK scan <span className="font-serif-italic">actually</span> works.
         </h2>
         <p className="text-base text-muted-foreground mt-5 max-w-xl leading-relaxed">
@@ -47,10 +47,7 @@ const Methodology = () => (
             key={s.n}
             className="p-7 bg-surface border hairline rounded-3xl glass-edge hover:shadow-floating transition-shadow"
           >
-            <div
-              className="text-[11px] font-mono tracking-widest mb-5"
-              style={{ color: `hsl(var(--${s.color}))` }}
-            >
+            <div className="text-[11px] font-mono tracking-widest mb-5 text-qck-cyan">
               {s.n}
             </div>
             <h3 className="text-lg font-semibold mb-2">{s.title}</h3>

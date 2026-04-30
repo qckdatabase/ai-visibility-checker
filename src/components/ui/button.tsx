@@ -9,10 +9,11 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 rounded-full",
-        primary: "bg-foreground text-background hover:bg-foreground/90 rounded-full",
+        default: "bg-cta text-cta-foreground hover:brightness-95 rounded-full font-semibold",
+        primary: "bg-cta text-cta-foreground hover:brightness-95 rounded-full font-semibold",
         spectral:
-          "bg-spectral text-white shadow-cta hover:scale-[1.02] active:scale-[0.98] transition-transform rounded-2xl font-semibold",
+          "bg-cta text-cta-foreground shadow-cta hover:brightness-95 active:scale-[0.98] transition-transform rounded-2xl font-semibold",
+        dark: "bg-foreground text-background hover:bg-foreground/90 rounded-full font-semibold",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full",
         outline: "border hairline bg-surface hover:bg-surface-muted rounded-full",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-full",

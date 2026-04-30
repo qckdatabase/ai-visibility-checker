@@ -24,12 +24,16 @@ const FEATURES = [
 const FeatureGrid = () => (
   <section id="features" className="px-6 md:px-10 py-24 bg-surface-muted border-y hairline">
     <div className="max-w-6xl mx-auto">
-      <div className="max-w-2xl mb-14">
+      <div className="mb-14">
         <p className="text-[10px] font-mono uppercase tracking-[0.25em] text-muted-foreground mb-4">
           Why QCK
         </p>
-        <h2 className="text-4xl md:text-5xl font-medium tracking-tight leading-[1.05] text-balance">
-          The agency behind the checker — <span className="font-serif-italic">built for AI-first search</span>.
+        <h2 className="text-4xl md:text-5xl font-medium tracking-tight leading-[1.05]">
+          The agency behind the
+          <br />
+          <span className="md:whitespace-nowrap">
+            checker — <span className="font-serif-italic">built for AI-first search</span>.
+          </span>
         </h2>
         <p className="text-base text-muted-foreground mt-5 max-w-xl leading-relaxed">
           QCK is a full-service SEO and AEO/GEO agency. The AI Visibility Checker is a free tool
@@ -54,13 +58,7 @@ const FeatureGrid = () => (
               key={f.title}
               className="p-7 bg-surface border hairline rounded-3xl glass-edge hover:shadow-floating transition-shadow"
             >
-              <div
-                className="size-11 rounded-2xl flex items-center justify-center mb-5"
-                style={{
-                  background: `hsl(var(--${f.color}) / 0.12)`,
-                  color: `hsl(var(--${f.color}))`,
-                }}
-              >
+              <div className="size-11 rounded-2xl flex items-center justify-center mb-5 bg-qck-cyan-light text-qck-cyan">
                 <Icon className="size-5" />
               </div>
               <h3 className="text-lg font-semibold mb-2">{f.title}</h3>

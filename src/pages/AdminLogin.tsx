@@ -2,6 +2,7 @@ import { useState, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Logo from "@/components/Logo";
 import { adminApi } from "@/lib/api/admin";
 
 const AdminLogin = () => {
@@ -29,11 +30,8 @@ const AdminLogin = () => {
       {/* Left: branding panel */}
       <div className="relative hidden lg:flex flex-col justify-between p-12 bg-foreground text-background overflow-hidden">
         <div aria-hidden className="absolute -inset-32 bg-spectral opacity-30 blur-3xl" />
-        <div className="relative flex items-center gap-2.5">
-          <div className="size-8 bg-background rounded-full flex items-center justify-center">
-            <div className="size-3 bg-spectral rounded-full" />
-          </div>
-          <span className="text-lg font-semibold">QCK</span>
+        <div className="relative flex items-center gap-3">
+          <Logo height={24} />
           <span className="text-[10px] font-mono uppercase tracking-widest opacity-60 ml-1">
             / Admin
           </span>

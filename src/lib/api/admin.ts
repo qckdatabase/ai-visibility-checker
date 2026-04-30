@@ -91,7 +91,11 @@ export const adminApi = {
 
   queries: (params: Record<string, string | number | undefined> = {}) => {
     const qs = new URLSearchParams(
-      Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined)),
+      Object.fromEntries(
+        Object.entries(params)
+          .filter(([, v]) => v !== undefined)
+          .map(([k, v]) => [k, String(v)]),
+      ),
     ).toString();
     return fetchJSON<QueriesResponse>(`${BASE}/queries${qs ? `?${qs}` : ""}`);
   },
@@ -101,14 +105,22 @@ export const adminApi = {
 
   keywords: (params: Record<string, string | number | undefined> = {}) => {
     const qs = new URLSearchParams(
-      Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined)),
+      Object.fromEntries(
+        Object.entries(params)
+          .filter(([, v]) => v !== undefined)
+          .map(([k, v]) => [k, String(v)]),
+      ),
     ).toString();
     return fetchJSON<KeywordsResponse>(`${BASE}/keywords${qs ? `?${qs}` : ""}`);
   },
 
   stores: (params: Record<string, string | number | undefined> = {}) => {
     const qs = new URLSearchParams(
-      Object.fromEntries(Object.entries(params).filter(([, v]) => v !== undefined)),
+      Object.fromEntries(
+        Object.entries(params)
+          .filter(([, v]) => v !== undefined)
+          .map(([k, v]) => [k, String(v)]),
+      ),
     ).toString();
     return fetchJSON<StoresResponse>(`${BASE}/stores${qs ? `?${qs}` : ""}`);
   },

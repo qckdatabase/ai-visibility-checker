@@ -12,8 +12,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Instrument Sans", "system-ui", "sans-serif"],
-        serif: ["Instrument Serif", "Georgia", "serif"],
+        sans: ["Poppins", "system-ui", "sans-serif"],
+        serif: ["Poppins", "system-ui", "sans-serif"],
         mono: ["JetBrains Mono", "ui-monospace", "monospace"],
       },
       colors: {
@@ -60,6 +60,18 @@ export default {
         surface: {
           DEFAULT: "hsl(var(--surface))",
           muted: "hsl(var(--surface-muted))",
+        },
+        cta: {
+          DEFAULT: "hsl(var(--cta))",
+          foreground: "hsl(var(--cta-foreground))",
+        },
+        qck: {
+          dark: "hsl(var(--qck-dark))",
+          "dark-blue": "hsl(var(--qck-dark-blue))",
+          cyan: "hsl(var(--qck-cyan))",
+          "cyan-light": "hsl(var(--qck-cyan-light))",
+          yellow: "hsl(var(--qck-yellow))",
+          gray: "hsl(var(--qck-gray))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",

@@ -1,89 +1,101 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* QCK AI Visibility — Spectral Minimal Design System
+/* QCK AI Visibility — Brand tokens
    All colors in HSL. No ad-hoc colors in components.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 4%;
+    /* QCK brand (HSL) */
+    --qck-white: 0 0% 100%;
+    --qck-dark: 196 72% 11%;        /* #082631 */
+    --qck-dark-blue: 196 45% 23%;   /* #204654 */
+    --qck-cyan: 188 100% 48%;       /* #00d6f7 */
+    --qck-cyan-light: 188 100% 95%; /* #e7fcff */
+    --qck-yellow: 54 100% 70%;      /* #ffeb65 */
+    --qck-gray: 205 7% 69%;         /* #abb2b7 */
+    --qck-light-bg: 0 0% 97%;       /* #f8f8f8 */
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 4%;
+    --background: var(--qck-white);
+    --foreground: var(--qck-dark);
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 4%;
+    --card: var(--qck-white);
+    --card-foreground: var(--qck-dark);
 
-    --primary: 240 10% 4%;
-    --primary-foreground: 0 0% 100%;
+    --popover: var(--qck-white);
+    --popover-foreground: var(--qck-dark);
 
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 240 10% 4%;
+    --primary: var(--qck-yellow);
+    --primary-foreground: var(--qck-dark);
 
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
+    --secondary: var(--qck-light-bg);
+    --secondary-foreground: var(--qck-dark);
 
-    --accent: 240 5% 96%;
-    --accent-foreground: 240 10% 4%;
+    --muted: var(--qck-light-bg);
+    --muted-foreground: 205 10% 42%;
+
+    --accent: var(--qck-cyan-light);
+    --accent-foreground: var(--qck-dark);
 
     --destructive: 350 89% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 240 10% 4%;
+    --border: 205 14% 89%;
+    --input: 205 14% 89%;
+    --ring: var(--qck-cyan);
 
     --radius: 1rem;
 
-    /* Spectral palette */
-    --prism-1: 217 91% 67%;   /* blue */
-    --prism-2: 271 91% 65%;   /* purple */
-    --prism-3: 351 95% 71%;   /* rose */
-    --prism-4: 38 96% 56%;    /* amber */
-    --prism-5: 160 84% 50%;   /* emerald */
+    /* Prism palette repurposed to brand tones (charts, dots) */
+    --prism-1: var(--qck-cyan);
+    --prism-2: var(--qck-dark-blue);
+    --prism-3: var(--qck-yellow);
+    --prism-4: var(--qck-dark);
+    --prism-5: var(--qck-gray);
 
     /* Surfaces */
-    --surface: 0 0% 100%;
-    --surface-muted: 240 5% 98%;
-    --hairline: 240 6% 92%;
+    --surface: var(--qck-white);
+    --surface-muted: var(--qck-light-bg);
+    --hairline: 205 14% 91%;
+
+    /* Brand CTA */
+    --cta: var(--qck-yellow);
+    --cta-foreground: var(--qck-dark);
 
     /* Gradients */
     --gradient-spectral: linear-gradient(90deg,
-      hsl(var(--prism-1)),
-      hsl(var(--prism-2)),
-      hsl(var(--prism-3)),
-      hsl(var(--prism-4)),
-      hsl(var(--prism-1)));
+      hsl(var(--qck-cyan)),
+      hsl(var(--qck-dark-blue)),
+      hsl(var(--qck-cyan)));
     --gradient-aura: radial-gradient(ellipse at top,
-      hsl(var(--prism-1) / 0.18),
-      hsl(var(--prism-2) / 0.12),
+      hsl(var(--qck-cyan) / 0.22),
+      hsl(var(--qck-cyan-light) / 0.6),
       transparent 70%);
     --gradient-rule-warning: linear-gradient(135deg,
-      hsl(var(--prism-3)),
-      hsl(var(--prism-4)));
+      hsl(var(--qck-yellow)),
+      hsl(var(--qck-cyan)));
 
     /* Shadows */
-    --shadow-glass: 0 4px 24px -1px hsl(240 10% 4% / 0.04), 0 2px 8px -1px hsl(240 10% 4% / 0.03);
-    --shadow-floating: 0 24px 60px -20px hsl(var(--prism-2) / 0.25), 0 8px 24px -8px hsl(240 10% 4% / 0.08);
-    --shadow-cta: 0 12px 32px -8px hsl(var(--prism-1) / 0.45);
+    --shadow-glass: 0 4px 24px -1px hsl(var(--qck-dark) / 0.05), 0 2px 8px -1px hsl(var(--qck-dark) / 0.03);
+    --shadow-floating: 0 24px 60px -20px hsl(var(--qck-dark) / 0.18), 0 8px 24px -8px hsl(var(--qck-dark) / 0.08);
+    --shadow-cta: 0 12px 32px -8px hsl(var(--qck-yellow) / 0.55);
 
     /* Motion */
     --ease-glide: cubic-bezier(0.22, 1, 0.36, 1);
     --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 240 10% 4%;
-    --sidebar-primary: 240 10% 4%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 5% 96%;
-    --sidebar-accent-foreground: 240 10% 4%;
-    --sidebar-border: 240 6% 92%;
-    --sidebar-ring: 217 91% 67%;
+    --sidebar-background: var(--qck-white);
+    --sidebar-foreground: var(--qck-dark);
+    --sidebar-primary: var(--qck-dark);
+    --sidebar-primary-foreground: var(--qck-white);
+    --sidebar-accent: var(--qck-light-bg);
+    --sidebar-accent-foreground: var(--qck-dark);
+    --sidebar-border: 205 14% 91%;
+    --sidebar-ring: var(--qck-cyan);
   }
 }
 
@@ -96,19 +108,19 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Instrument Sans', system-ui, sans-serif;
-    font-feature-settings: 'ss01', 'cv11';
+    font-family: 'Poppins', system-ui, sans-serif;
   }
   .font-serif-italic {
-    font-family: 'Instrument Serif', Georgia, serif;
+    font-family: 'Poppins', system-ui, sans-serif;
     font-style: italic;
-    font-weight: 400;
+    font-weight: 600;
+    color: hsl(var(--qck-cyan));
   }
   .font-mono {
     font-family: 'JetBrains Mono', ui-monospace, monospace;
   }
   ::selection {
-    background-color: hsl(var(--prism-1) / 0.2);
+    background-color: hsl(var(--qck-cyan) / 0.25);
   }
 }
 
@@ -130,7 +142,7 @@
     background-image: var(--gradient-aura);
   }
   .glass-edge {
-    outline: 1px solid hsl(240 10% 4% / 0.05);
+    outline: 1px solid hsl(var(--qck-dark) / 0.05);
     outline-offset: -1px;
     box-shadow: var(--shadow-glass);
   }

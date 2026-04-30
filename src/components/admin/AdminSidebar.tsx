@@ -10,6 +10,7 @@ import {
   X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Logo from "@/components/Logo";
 
 const NAV: Array<{
   section: string;
@@ -86,16 +87,13 @@ const AdminSidebar = ({ open, onClose }: AdminSidebarProps) => {
     <>
       <aside className="hidden lg:flex lg:sticky lg:top-0 w-60 shrink-0 flex-col border-r hairline bg-surface lg:h-screen lg:overflow-y-auto">
         <div className="p-5 border-b hairline">
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="size-8 bg-foreground rounded-full flex items-center justify-center">
-              <div className="size-3 bg-spectral rounded-full" />
-            </div>
-            <div className="leading-tight">
-              <p className="text-sm font-semibold tracking-tight">QCK</p>
-              <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
-                Admin Console
-              </p>
-            </div>
+          <Link to="/" className="flex items-center gap-3 group">
+            <span className="inline-flex items-center justify-center px-2.5 py-1.5 rounded-lg bg-foreground">
+              <Logo height={18} />
+            </span>
+            <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+              Admin Console
+            </span>
           </Link>
         </div>
 
@@ -137,16 +135,13 @@ const AdminSidebar = ({ open, onClose }: AdminSidebarProps) => {
         )}
       >
         <div className="flex items-center justify-between p-5 border-b hairline">
-          <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="size-8 bg-foreground rounded-full flex items-center justify-center">
-              <div className="size-3 bg-spectral rounded-full" />
-            </div>
-            <div className="leading-tight">
-              <p className="text-sm font-semibold tracking-tight">QCK</p>
-              <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
-                Admin Console
-              </p>
-            </div>
+          <Link to="/" className="flex items-center gap-3 group">
+            <span className="inline-flex items-center justify-center px-2.5 py-1.5 rounded-lg bg-foreground">
+              <Logo height={18} />
+            </span>
+            <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+              Admin Console
+            </span>
           </Link>
           <button
             onClick={onClose}
