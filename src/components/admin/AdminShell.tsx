@@ -11,11 +11,11 @@ interface AdminShellProps {
 
 const AdminShell = ({ eyebrow, title, actions, children }: AdminShellProps) => {
   return (
-    <div className="min-h-dvh flex bg-background">
+    <div className="min-h-dvh flex flex-col lg:flex-row bg-background">
       <AdminSidebar />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="flex items-center justify-between px-4 md:px-6 lg:px-10 py-4 md:py-5 border-b hairline bg-surface/80 backdrop-blur-md sticky top-0 z-20">
+        <header className="flex items-center justify-between px-4 md:px-6 lg:px-10 py-4 md:py-5 border-b hairline bg-surface/80 backdrop-blur-md lg:sticky lg:top-0 z-20">
           <div className="flex items-center gap-3">
             <div>
               <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
