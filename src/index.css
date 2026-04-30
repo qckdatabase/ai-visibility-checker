@@ -180,20 +180,4 @@
   .pause-on-hover:hover {
     animation-play-state: paused;
   }
-  .skip-link {
-    position: absolute;
-    width: 1px; height: 1px; padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0,0,0,0);
-    white-space: nowrap; border: 0;
-  }
-  .skip-link:focus, .skip-link:focus-visible {
-    position: fixed;
-    top: var(--space-3); left: var(--space-3);
-    width: auto; height: auto; clip: auto;
-    padding: var(--space-2) var(--space-4);
-    background: hsl(var(--foreground));
-    color: hsl(var(--qck-white));
-    border-radius: 8px;
-    z-index: 9999;
-  }
 }

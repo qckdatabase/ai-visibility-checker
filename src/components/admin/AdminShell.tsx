@@ -38,7 +38,7 @@ const AdminShell = ({ eyebrow, title, actions, children }: AdminShellProps) => {
           </div>
         </header>
 
-        <main id="main-content" className="flex-1 p-4 md:p-6 lg:p-10 space-y-8 animate-fade-in">
+        <main className="flex-1 p-4 md:p-6 lg:p-10 space-y-8 animate-fade-in">
           {children}
         </main>
       </div>
