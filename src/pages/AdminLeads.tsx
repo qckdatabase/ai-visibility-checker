@@ -90,7 +90,7 @@ const AdminLeads = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground border-b hairline bg-surface-muted/40">
+              <tr className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground border-b hairline bg-surface-muted">
                 <th className="text-left py-3.5 px-5 font-normal">Lead</th>
                 <th className="text-left py-3.5 px-5 font-normal">Store</th>
                 <th className="text-left py-3.5 px-5 font-normal w-44">Visibility</th>

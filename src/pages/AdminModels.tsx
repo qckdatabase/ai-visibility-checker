@@ -158,7 +158,7 @@ const Metric = ({
     <p
       className={cn(
         "font-mono tabular-nums font-semibold text-sm mt-0.5",
-        tone === "warn" && "text-prism-3",
+        tone === "warn" && "text-warning",
         tone === "ok" && "text-foreground",
       )}
     >

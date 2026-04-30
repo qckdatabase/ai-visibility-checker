@@ -32,8 +32,8 @@ const Chip = ({
   <span
     className={cn(
       "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs border hairline",
-      tone === "ok" && "bg-prism-5/10 text-prism-5 border-prism-5/20",
-      tone === "warn" && "bg-prism-3/10 text-prism-3 border-prism-3/20",
+      tone === "ok" && "bg-success-surface text-success border-success/20",
+      tone === "warn" && "bg-warning-surface text-warning border-warning/20",
       tone === "neutral" && "bg-surface text-muted-foreground",
     )}
   >
@@ -145,7 +145,7 @@ const AdminQueries: React.FC = () => {
           Loading…
         </div>
       ) : isError ? (
-        <div className="flex items-center justify-center py-20 text-sm text-red-600">
+        <div className="flex items-center justify-center py-20 text-sm text-danger">
           Error: {(error as any)?.message ?? "Failed to load"}
         </div>
       ) : (
@@ -153,7 +153,7 @@ const AdminQueries: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground border-b hairline bg-surface-muted/40">
+                <tr className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground border-b hairline bg-surface-muted">
                   <th className="w-8" />
                   <th className="text-left py-3.5 px-5 font-normal">Query</th>
                   <th className="text-left py-3.5 px-5 font-normal">Store</th>
@@ -190,7 +190,7 @@ const AdminQueries: React.FC = () => {
                         <span className={cn(
                           "inline-flex px-2 py-0.5 rounded-full text-[11px] font-mono",
                           r.cached
-                            ? "bg-prism-5/10 text-prism-5"
+                            ? "bg-success-surface text-success"
                             : "bg-surface-muted text-muted-foreground",
                         )}>
                           {r.cached ? "Yes" : "No"}
@@ -213,7 +213,7 @@ const AdminQueries: React.FC = () => {
                                   className={cn(
                                     "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs border hairline",
                                     b.isUser
-                                      ? "bg-prism-1/10 text-prism-1 border-prism-1/20"
+                                      ? "bg-accent text-accent-foreground border-accent/20"
                                       : "bg-surface text-muted-foreground",
                                   )}
                                 >

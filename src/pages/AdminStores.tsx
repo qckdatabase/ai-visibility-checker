@@ -137,7 +137,7 @@ const AdminStores: React.FC = () => {
           Loading stores…
         </div>
       ) : isError ? (
-        <div className="flex items-center justify-center py-20 text-sm text-red-600">
+        <div className="flex items-center justify-center py-20 text-sm text-danger">
           Error: {(error as any)?.message ?? "Failed to load stores"}
         </div>
       ) : (
@@ -145,7 +145,7 @@ const AdminStores: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground border-b hairline bg-surface-muted/40">
+                <tr className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground border-b hairline bg-surface-muted">
                   <th className="text-left py-3.5 px-5 font-normal">Store</th>
                   <th className="text-right py-3.5 px-5 font-normal">Queries</th>
                   <th className="text-right py-3.5 px-5 font-normal">Avg Rank</th>

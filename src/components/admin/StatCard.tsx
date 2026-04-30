@@ -13,7 +13,7 @@ interface StatCardProps {
 const StatCard = ({ label, value, delta, hint, accent = "prism-1" }: StatCardProps) => {
   const positive = (delta ?? 0) >= 0;
   return (
-    <div className="relative p-6 rounded-3xl bg-surface border hairline overflow-hidden">
+    <div className="relative p-6 rounded-3xl bg-surface border hairline glass-edge overflow-hidden">
       <div
         aria-hidden
         className="absolute top-0 right-0 size-32 rounded-full blur-3xl opacity-20 pointer-events-none"
@@ -32,8 +32,8 @@ const StatCard = ({ label, value, delta, hint, accent = "prism-1" }: StatCardPro
               className={cn(
                 "inline-flex items-center gap-1 text-xs font-medium px-1.5 py-0.5 rounded-full",
                 positive
-                  ? "bg-prism-5/10 text-prism-5"
-                  : "bg-prism-3/10 text-prism-3",
+                  ? "bg-success-surface text-success"
+                  : "bg-warning-surface text-warning",
               )}
             >
               {positive ? (

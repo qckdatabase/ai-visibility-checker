@@ -44,6 +44,16 @@
     --destructive: 350 89% 60%;
     --destructive-foreground: 0 0% 100%;
 
+    --success: 150 70% 33%;
+    --success-foreground: 0 0% 100%;
+    --success-surface: 150 50% 94%;
+    --warning: 36 100% 36%;
+    --warning-foreground: 0 0% 100%;
+    --warning-surface: 40 100% 93%;
+    --danger: 337 78% 43%;
+    --danger-foreground: 0 0% 100%;
+    --danger-surface: 343 80% 95%;
+
     --border: 205 14% 89%;
     --input: 205 14% 89%;
     --ring: var(--qck-cyan);
@@ -110,6 +120,10 @@
     @apply bg-background text-foreground antialiased;
     font-family: 'Poppins', system-ui, sans-serif;
   }
+  :where(button, a, select, textarea, [role="button"], [tabindex]):focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
   .font-serif-italic {
     font-family: 'Poppins', system-ui, sans-serif;
     font-style: italic;
@@ -165,5 +179,21 @@
 @layer utilities {
   .pause-on-hover:hover {
     animation-play-state: paused;
+  }
+  .skip-link {
+    position: absolute;
+    width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0);
+    white-space: nowrap; border: 0;
+  }
+  .skip-link:focus, .skip-link:focus-visible {
+    position: fixed;
+    top: var(--space-3); left: var(--space-3);
+    width: auto; height: auto; clip: auto;
+    padding: var(--space-2) var(--space-4);
+    background: hsl(var(--foreground));
+    color: hsl(var(--qck-white));
+    border-radius: 8px;
+    z-index: 9999;
   }
 }

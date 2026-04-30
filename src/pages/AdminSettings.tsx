@@ -127,8 +127,8 @@ const AdminSettings = () => {
                   className={cn(
                     "inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border",
                     config.openaiApiKeyStatus === "active"
-                      ? "bg-prism-5/10 text-prism-5 border-prism-5/20"
-                      : "bg-prism-3/10 text-prism-3 border-prism-3/20",
+                      ? "bg-success-surface text-success border-success/20"
+                      : "bg-warning-surface text-warning border-warning/20",
                   )}
                 >
                   <span className="size-1.5 rounded-full bg-current" />
@@ -160,9 +160,9 @@ const AdminSettings = () => {
                   className="mt-1 w-full px-4 py-3 rounded-2xl bg-surface border hairline focus:outline-none focus:ring-2 focus:ring-foreground/10 focus:border-foreground/20 transition-all text-sm font-mono"
                 />
               </label>
-              {openaiRotateError && (
-                <p className="text-xs text-prism-3">{openaiRotateError}</p>
-              )}
+                {openaiRotateError && (
+                  <p className="text-xs text-warning">{openaiRotateError}</p>
+                )}
               <Button
                 size="sm"
                 variant="primary"
@@ -215,7 +215,7 @@ const AdminSettings = () => {
                 />
               </label>
               {passwordError && (
-                <p className="text-xs text-prism-3">{passwordError}</p>
+                <p className="text-xs text-warning">{passwordError}</p>
               )}
               <Button
                 size="sm"
@@ -231,8 +231,8 @@ const AdminSettings = () => {
       </SettingsCard>
 
       {/* Danger zone */}
-      <section className="p-6 rounded-3xl border border-prism-3/30 bg-prism-3/5">
-        <p className="text-[10px] font-mono uppercase tracking-widest text-prism-3 mb-1">
+      <section className="p-6 rounded-3xl border border-danger/30 bg-danger/5">
+        <p className="text-[10px] font-mono uppercase tracking-widest text-danger mb-1">
           Danger zone
         </p>
         <h2 className="text-lg font-semibold tracking-tight mb-2">
@@ -246,7 +246,7 @@ const AdminSettings = () => {
           <Button
             variant="outline"
             size="sm"
-            className="border-prism-3/40 text-prism-3 hover:bg-prism-3/10"
+            className="border-danger/40 text-danger hover:bg-danger/10"
             onClick={handleMaintenanceToggle}
             disabled={configAction.isPending}
           >

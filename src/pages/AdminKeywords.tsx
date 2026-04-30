@@ -102,7 +102,7 @@ const AdminKeywords: React.FC = () => {
         {isLoading ? (
           <div className="py-8 text-sm text-muted-foreground text-center">Loading…</div>
         ) : isError ? (
-          <div className="py-8 text-sm text-red-600 text-center">
+          <div className="py-8 text-sm text-danger text-center">
             Error: {error?.message ?? "Failed to load keywords"}
           </div>
         ) : (
@@ -149,7 +149,7 @@ const AdminKeywords: React.FC = () => {
         {isLoading ? (
           <div className="py-8 text-sm text-muted-foreground text-center">Loading…</div>
         ) : isError ? (
-          <div className="py-8 text-sm text-red-600 text-center">
+          <div className="py-8 text-sm text-danger text-center">
             Error: {error?.message ?? "Failed to load trending"}
           </div>
         ) : trendingKeywords.length === 0 ? (

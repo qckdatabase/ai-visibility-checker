@@ -45,7 +45,7 @@ const AdminDashboard: React.FC = () => {
   if (isError) {
     return (
       <AdminShell eyebrow="Platform" title="Overview">
-        <div className="flex items-center justify-center py-32 text-sm text-red-600">
+        <div className="flex items-center justify-center py-32 text-sm text-danger">
           Error: {(error as any)?.message ?? "Failed to load dashboard"}
         </div>
       </AdminShell>
@@ -93,7 +93,7 @@ const AdminDashboard: React.FC = () => {
       </section>
 
       <section className="grid grid-cols-1 xl:grid-cols-3 gap-5">
-        <div className="xl:col-span-2 p-6 rounded-3xl bg-surface border hairline">
+        <div className="xl:col-span-2 p-6 rounded-3xl bg-surface border hairline glass-edge">
           <div className="flex items-start justify-between mb-6">
             <div>
               <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
