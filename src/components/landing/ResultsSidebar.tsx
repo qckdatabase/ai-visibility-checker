@@ -106,16 +106,16 @@ const ResultsSidebar = ({ open, loading, keyword, store, results, onClose }: Res
                   Claim your free SEO &amp; CRO audit{" "}
                   <span className="font-serif-italic opacity-90">— and start ranking inside AI answers.</span>
                 </h3>
-                <p className="text-sm opacity-70 mb-5">
-                  QCK&apos;s team will personally audit {store || "your store"} and send a 90-day growth
-                  plan to climb the AI recommendations list. No commitment, no signup.
-                </p>
                 <Button variant="spectral" size="lg" asChild className="w-full">
                   <a href="https://fun.qck.co/lp-1/page_v3z9b/" target="_blank" rel="noreferrer">
                     Get my free audit
                     <ArrowUpRight className="size-4" />
                   </a>
                 </Button>
+                <p className="text-sm opacity-70 mt-5">
+                  QCK&apos;s team will personally audit {store || "your store"} and send a 90-day growth
+                  plan to climb the AI recommendations list. No commitment, no signup.
+                </p>
                 <p className="text-[11px] font-mono uppercase tracking-widest opacity-50 mt-3 text-center">
                   Trusted by 100+ Shopify brands
                 </p>
