@@ -20,6 +20,8 @@ describe("POST /api/visibility", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    process.env.OPENAI_API_KEY = "test-key";
+    process.env.STORE_DRIVER = "memory";
     app = createApp();
   });
 
@@ -32,7 +34,7 @@ describe("POST /api/visibility", () => {
       model: "gpt-4o",
       searchedAt: "2024-01-01T00:00:00Z",
     };
-    (runPipeline as any).mockResolvedValue(mockResult);
+    vi.mocked(runPipeline).mockResolvedValue(mockResult);
 
     const res = await request(app)
       .post("/api/visibility")
@@ -54,7 +56,7 @@ describe("POST /api/visibility", () => {
       model: "gpt-4o",
       searchedAt: "2024-01-01T00:00:00Z",
     };
-    (runPipeline as any).mockResolvedValue(mockResult);
+    vi.mocked(runPipeline).mockResolvedValue(mockResult);
 
     const res = await request(app)
       .post("/api/visibility")
@@ -62,6 +64,59 @@ describe("POST /api/visibility", () => {
       .expect(200);
 
     expect(res.body.cached).toBe(true);
+  });
+
+  it("blocks an IP after 10 successful visibility checks", async () => {
+    const mockResult: VisibilityResponse = {
+      results: [],
+      userRank: null,
+      cached: false,
+      queryId: "q1",
+      model: "gpt-4o",
+      searchedAt: "2024-01-01T00:00:00Z",
+    };
+    vi.mocked(runPipeline).mockResolvedValue(mockResult);
+
+    for (let i = 0; i < 10; i += 1) {
+      await request(app)
+        .post("/api/visibility")
+        .send({ keyword: `shoes ${i}`, store: "nike.com" })
+        .expect(200);
+    }
+
+    const res = await request(app)
+      .post("/api/visibility")
+      .send({ keyword: "shoes 10", store: "nike.com" })
+      .expect(429);
+
+    expect(res.body.error).toBe("rate_limited");
+    expect(runPipeline).toHaveBeenCalledTimes(10);
+  });
+
+  it("does not count failed pipeline attempts against the IP limit", async () => {
+    vi.mocked(runPipeline).mockRejectedValue(new Error("OpenAI auth failed"));
+
+    for (let i = 0; i < 10; i += 1) {
+      await request(app)
+        .post("/api/visibility")
+        .send({ keyword: `failed shoes ${i}`, store: "nike.com" })
+        .expect(502);
+    }
+
+    const mockResult: VisibilityResponse = {
+      results: [],
+      userRank: null,
+      cached: false,
+      queryId: "q1",
+      model: "gpt-4o",
+      searchedAt: "2024-01-01T00:00:00Z",
+    };
+    vi.mocked(runPipeline).mockResolvedValue(mockResult);
+
+    await request(app)
+      .post("/api/visibility")
+      .send({ keyword: "successful shoes", store: "nike.com" })
+      .expect(200);
   });
 
   it("returns 400 on empty keyword", async () => {
@@ -83,7 +138,7 @@ describe("POST /api/visibility", () => {
   });
 
   it("returns 502 on pipeline upstream_failed", async () => {
-    (runPipeline as any).mockRejectedValue(
+    vi.mocked(runPipeline).mockRejectedValue(
       new PipelineError("upstream_failed", "Stage 2 failed"),
     );
 
@@ -96,7 +151,7 @@ describe("POST /api/visibility", () => {
   });
 
   it("returns 502 on generic OpenAI error", async () => {
-    (runPipeline as any).mockRejectedValue(new Error("OpenAI auth failed"));
+    vi.mocked(runPipeline).mockRejectedValue(new Error("OpenAI auth failed"));
 
     const res = await request(app)
       .post("/api/visibility")
@@ -107,7 +162,7 @@ describe("POST /api/visibility", () => {
   });
 
   it("returns 500 on unknown error", async () => {
-    (runPipeline as any).mockRejectedValue("string error");
+    vi.mocked(runPipeline).mockRejectedValue("string error");
 
     const res = await request(app)
       .post("/api/visibility")

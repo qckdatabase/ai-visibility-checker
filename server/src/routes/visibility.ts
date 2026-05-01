@@ -1,14 +1,15 @@
-import { Router } from "express";
+import { Router, type Request } from "express";
 import { z } from "zod";
 import { v4 as uuidv4 } from "uuid";
 import { runPipeline } from "../pipeline/index.js";
 import { PipelineError } from "../lib/errors.js";
 import type { VisibilityResponse } from "../types.js";
 import { getEnv } from "../lib/env.js";
+import { getPool } from "../db/index.js";
 
 const router = Router();
 
-// TODO: rate limiting
+const FREE_CHECK_LIMIT = 10;
 
 const QuerySchema = z.object({
   keyword: z.string().trim().min(1, "keyword is required"),
@@ -18,6 +19,53 @@ const QuerySchema = z.object({
 
 function errorResponse(code: string, message: string, status: number) {
   return { error: code, message, status };
+}
+
+function getMemoryUsage(req: Request) {
+  req.app.locals.visibilityIpUsage ??= new Map<string, number>();
+  return req.app.locals.visibilityIpUsage as Map<string, number>;
+}
+
+async function reserveVisibilityCheck(req: Request, storeDriver: string, ipAddress: string) {
+  if (storeDriver !== "postgres") {
+    const usage = getMemoryUsage(req);
+    const count = usage.get(ipAddress) ?? 0;
+    if (count >= FREE_CHECK_LIMIT) return false;
+    usage.set(ipAddress, count + 1);
+    return true;
+  }
+
+  const pool = getPool();
+  const result = await pool.query<{ check_count: number }>(
+    `INSERT INTO visibility_ip_usage (ip_address, check_count, first_seen, last_seen)
+     VALUES ($1, 1, now(), now())
+     ON CONFLICT (ip_address) DO UPDATE
+     SET check_count = visibility_ip_usage.check_count + 1,
+         last_seen = now()
+     WHERE visibility_ip_usage.check_count < $2
+     RETURNING check_count`,
+    [ipAddress, FREE_CHECK_LIMIT],
+  );
+
+  return (result.rowCount ?? 0) > 0;
+}
+
+async function refundVisibilityCheck(req: Request, storeDriver: string, ipAddress: string) {
+  if (storeDriver !== "postgres") {
+    const usage = getMemoryUsage(req);
+    const count = usage.get(ipAddress) ?? 0;
+    usage.set(ipAddress, Math.max(0, count - 1));
+    return;
+  }
+
+  const pool = getPool();
+  await pool.query(
+    `UPDATE visibility_ip_usage
+     SET check_count = GREATEST(check_count - 1, 0),
+         last_seen = now()
+     WHERE ip_address = $1`,
+    [ipAddress],
+  );
 }
 
 router.post("/api/visibility", async (req, res) => {
@@ -34,11 +82,24 @@ router.post("/api/visibility", async (req, res) => {
   }
 
   const { keyword, store, consent } = parsed.data;
+  const ipAddress = req.ip || req.socket.remoteAddress || "unknown";
+
+  let checkReserved = false;
+  try {
+    checkReserved = await reserveVisibilityCheck(req, env.STORE_DRIVER, ipAddress);
+  } catch (dbErr) {
+    log({ error: "rate_limit_failed", message: String(dbErr) });
+    return res.status(500).json(errorResponse("internal", "An unexpected error occurred", 500));
+  }
+
+  if (!checkReserved) {
+    log({ error: "rate_limited", ipAddress });
+    return res.status(429).json(errorResponse("rate_limited", "You have reached the free visibility check limit.", 429));
+  }
 
   // Log consent to DB if postgres driver is active
   if (consent && env.STORE_DRIVER === "postgres") {
     try {
-      const { getPool } = await import("../db/index.js");
       const pool = getPool();
       await pool.query(
         `INSERT INTO consents (keyword, store, ip_address, created_at)
@@ -57,6 +118,13 @@ router.post("/api/visibility", async (req, res) => {
     log({ keyword, store, cached: result.cached, resultCount: result.results.length, category: result.category, totalMs: Date.now() - start });
     return res.json(result);
   } catch (err: unknown) {
+    if (checkReserved) {
+      try {
+        await refundVisibilityCheck(req, env.STORE_DRIVER, ipAddress);
+      } catch (dbErr) {
+        log({ error: "rate_limit_refund_failed", message: String(dbErr) });
+      }
+    }
     if (err instanceof PipelineError) {
       log({ error: err.code, message: err.message });
       const status = err.code === "invalid_input" ? 400 : 502;

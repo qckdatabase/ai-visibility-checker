@@ -45,6 +45,13 @@ CREATE TABLE IF NOT EXISTS consents (
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+CREATE TABLE IF NOT EXISTS visibility_ip_usage (
+  ip_address  TEXT PRIMARY KEY,
+  check_count INTEGER NOT NULL DEFAULT 0,
+  first_seen  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  last_seen   TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
 CREATE INDEX IF NOT EXISTS idx_queries_category  ON queries(category);
 CREATE INDEX IF NOT EXISTS idx_queries_store    ON queries(store);
 CREATE INDEX IF NOT EXISTS idx_queries_keyword ON queries(keyword);
