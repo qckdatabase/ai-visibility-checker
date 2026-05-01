@@ -51,8 +51,8 @@ const Terms = () => {
                 <h2 className="text-lg font-semibold text-foreground mb-3">4. Data Collection Notice</h2>
                 <p>
                   When you submit a visibility check, the keyword, store name, your IP address, and timestamp
-                  are recorded for service operation and fraud prevention purposes. By using the Service and
-                  checking the consent box, you consent to this collection. See our Privacy Policy for
+                  are recorded for service operation and fraud prevention purposes. By submitting a visibility
+                  check, you consent to this collection. See our Privacy Policy for
                   details on how data is handled.
                 </p>
               </div>

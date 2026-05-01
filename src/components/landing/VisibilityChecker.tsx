@@ -16,12 +16,11 @@ const SUGGESTIONS = [
 const VisibilityChecker = ({ onSubmit, loading }: VisibilityCheckerProps) => {
   const [keyword, setKeyword] = useState("");
   const [store, setStore] = useState("");
-  const [consented, setConsented] = useState(false);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!keyword.trim() || !store.trim() || !consented) return;
-    onSubmit({ keyword: keyword.trim(), store: store.trim(), consent: consented });
+    if (!keyword.trim() || !store.trim()) return;
+    onSubmit({ keyword: keyword.trim(), store: store.trim(), consent: true });
   };
 
   return (
@@ -60,7 +59,7 @@ const VisibilityChecker = ({ onSubmit, loading }: VisibilityCheckerProps) => {
         <Button
           type="submit"
           variant="spectral"
-          disabled={loading || !keyword.trim() || !store.trim() || !consented}
+          disabled={loading || !keyword.trim() || !store.trim()}
           className="h-12 px-5 md:px-6 shrink-0 group relative shadow-none"
         >
           {loading ? (
@@ -92,19 +91,8 @@ const VisibilityChecker = ({ onSubmit, loading }: VisibilityCheckerProps) => {
         ))}
       </div>
 
-      <div className="mt-8 px-4 flex items-start md:items-center justify-center gap-2.5 md:whitespace-nowrap text-center md:text-left">
-        <input
-          id="consent"
-          type="checkbox"
-          checked={consented}
-          onChange={(e) => setConsented(e.target.checked)}
-          className="size-3.5 rounded border-border text-primary accent-primary cursor-pointer shrink-0"
-          disabled={loading}
-        />
-        <label
-          htmlFor="consent"
-          className="text-xs text-muted-foreground cursor-pointer"
-        >
+      <div className="mt-8 px-4 text-center text-xs text-muted-foreground md:whitespace-nowrap">
+        <p>
           I agree to the{" "}
           <a href="/terms" className="underline hover:text-foreground transition-colors">
             Terms of Service
@@ -114,7 +102,7 @@ const VisibilityChecker = ({ onSubmit, loading }: VisibilityCheckerProps) => {
             Privacy Policy
           </a>
           . I understand my search data may be stored to operate this service.
-        </label>
+        </p>
       </div>
     </div>
   );

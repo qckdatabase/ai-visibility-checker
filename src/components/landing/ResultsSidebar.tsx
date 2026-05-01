@@ -71,9 +71,27 @@ const ResultsSidebar = ({ open, loading, keyword, store, results, onClose }: Res
           </button>
         </div>
 
+        {/* Query echo */}
+        <div className="px-6 py-4 border-b hairline shrink-0 bg-surface-muted/50">
+          <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">
+            Query
+          </p>
+          <p className="text-sm font-medium leading-snug">"{keyword}"</p>
+          <p className="text-xs text-muted-foreground mt-1">Checking visibility for {store}</p>
+        </div>
+
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto">
+          {loading ? (
+            <LoadingState />
+          ) : (
+            <ResultsList results={results} store={store} />
+          )}
+        </div>
+
         {/* Marketing CTA banner */}
         {!loading && (
-          <div className="shrink-0 p-5 border-b hairline animate-fade-in-up">
+          <div className="shrink-0 p-5 border-t hairline animate-fade-in-up">
             <div className="relative overflow-hidden rounded-3xl p-6 bg-foreground text-background">
               <div
                 aria-hidden
@@ -105,24 +123,6 @@ const ResultsSidebar = ({ open, loading, keyword, store, results, onClose }: Res
             </div>
           </div>
         )}
-
-        {/* Query echo */}
-        <div className="px-6 py-4 border-b hairline shrink-0 bg-surface-muted/50">
-          <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-1">
-            Query
-          </p>
-          <p className="text-sm font-medium leading-snug">"{keyword}"</p>
-          <p className="text-xs text-muted-foreground mt-1">Checking visibility for {store}</p>
-        </div>
-
-        {/* Body */}
-        <div className="flex-1 overflow-y-auto">
-          {loading ? (
-            <LoadingState />
-          ) : (
-            <ResultsList results={results} store={store} />
-          )}
-        </div>
 
       </aside>
     </div>
