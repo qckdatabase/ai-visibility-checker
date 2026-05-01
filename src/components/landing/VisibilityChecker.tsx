@@ -91,19 +91,6 @@ const VisibilityChecker = ({ onSubmit, loading }: VisibilityCheckerProps) => {
         ))}
       </div>
 
-      <div className="mt-8 px-4 text-center text-xs text-muted-foreground md:whitespace-nowrap">
-        <p>
-          I agree to the{" "}
-          <a href="/terms" className="underline hover:text-foreground transition-colors">
-            Terms of Service
-          </a>{" "}
-          and{" "}
-          <a href="/privacy" className="underline hover:text-foreground transition-colors">
-            Privacy Policy
-          </a>
-          . I understand my search data may be stored to operate this service.
-        </p>
-      </div>
     </div>
   );
 };
